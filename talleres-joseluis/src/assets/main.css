@@ -1,0 +1,250 @@
+/* ============================================================
+   VARIABLES GLOBALES
+============================================================ */
+:root {
+  --green-dark:    #1a3a1a;
+  --green-mid:     #2d6a2d;
+  --green-light:   #4a9e4a;
+  --green-pale:    #e8f5e8;
+  --yellow:        #f5c518;
+  --yellow-dark:   #d4a017;
+  --earth:         #8b6914;
+  --earth-light:   #c8a84b;
+  --white:         #ffffff;
+  --gray-light:    #f4f4f2;
+  --gray-mid:      #d0d0c8;
+  --gray-dark:     #555550;
+  --text-main:     #1e1e1a;
+  --text-soft:     #5a5a54;
+  --shadow:        0 4px 20px rgba(0,0,0,0.12);
+  --shadow-strong: 0 8px 32px rgba(0,0,0,0.22);
+  --radius:        10px;
+  --radius-sm:     6px;
+  --transition:    0.25s ease;
+  --nav-height:    70px;
+}
+
+/* ============================================================
+   RESET
+============================================================ */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  font-family: 'Open Sans', sans-serif;
+  color: var(--text-main);
+  background: var(--white);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: 'Oswald', sans-serif;
+  line-height: 1.2;
+}
+
+img { max-width: 100%; display: block; }
+a   { text-decoration: none; color: inherit; }
+button { cursor: pointer; border: none; font-family: inherit; }
+input, textarea, select { font-family: inherit; }
+
+/* ============================================================
+   SCROLLBAR
+============================================================ */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: var(--gray-light); }
+::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 4px; }
+
+/* ============================================================
+   LAYOUT UTILITIES
+============================================================ */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.section-pad {
+  padding: 5rem 0;
+}
+
+/* ============================================================
+   SECTION HEADER COMPARTIDO
+============================================================ */
+.section-header {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--green-pale);
+  color: var(--green-mid);
+  border: 1px solid rgba(74,158,74,0.3);
+  padding: 0.3rem 0.9rem;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  margin-bottom: 0.8rem;
+}
+
+.section-title {
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  color: var(--green-dark);
+  margin-bottom: 0.8rem;
+}
+
+.section-title span { color: var(--green-light); }
+
+.section-desc {
+  font-size: 1rem;
+  color: var(--text-soft);
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.divider {
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(to right, var(--green-light), var(--yellow));
+  border-radius: 2px;
+  margin: 0.8rem auto 1.2rem;
+}
+
+/* ============================================================
+   BOTONES COMPARTIDOS
+============================================================ */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.85rem 2rem;
+  border-radius: var(--radius);
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  transition: var(--transition);
+  border: none;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: var(--yellow);
+  color: var(--green-dark);
+}
+.btn-primary:hover {
+  background: var(--yellow-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(245,197,24,0.4);
+}
+
+.btn-secondary {
+  background: var(--green-mid);
+  color: var(--white);
+}
+.btn-secondary:hover {
+  background: var(--green-dark);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(45,106,45,0.35);
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 2px solid rgba(255,255,255,0.6);
+}
+.btn-outline:hover {
+  border-color: var(--yellow);
+  color: var(--yellow);
+  transform: translateY(-2px);
+}
+
+.btn-outline-dark {
+  background: transparent;
+  color: var(--green-mid);
+  border: 2px solid var(--green-mid);
+}
+.btn-outline-dark:hover {
+  background: var(--green-mid);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
+/* ============================================================
+   FORMULARIO COMPARTIDO
+============================================================ */
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: 0.35rem;
+}
+
+.form-group label .req { color: #ef4444; margin-left: 2px; }
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: 0.65rem 0.9rem;
+  border: 2px solid var(--gray-mid);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+  color: var(--text-main);
+  background: var(--white);
+  transition: var(--transition);
+  outline: none;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  border-color: var(--green-light);
+  box-shadow: 0 0 0 3px rgba(74,158,74,0.12);
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+/* ============================================================
+   FADE TRANSITIONS
+============================================================ */
+.fade-enter-active,
+.fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.fade-enter-from,
+.fade-leave-to { opacity: 0; transform: translateY(8px); }
+
+/* ============================================================
+   RESPONSIVE HELPERS
+============================================================ */
+@media (max-width: 640px) {
+  .section-pad   { padding: 3.5rem 0; }
+  .form-row      { grid-template-columns: 1fr; }
+}
