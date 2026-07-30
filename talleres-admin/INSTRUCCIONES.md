@@ -69,4 +69,4 @@ El .apk estará en: `src-tauri/gen/android/app/build/outputs/apk/`
 
 - Los datos se leen y escriben en Supabase en tiempo real
 - Las fotos se suben a Supabase Storage (bucket: parts-images)
-- La web pública (talleres-joseluis) se actualiza automáticamente al guardar cambios aquí
+- La web pública (talleres-enrique) se actualiza automáticamente al guardar cambios aquí
