@@ -1,0 +1,4 @@
+#Tue May 19 13:54:35 CEST 2026
+base.0=D\:\\CLAUDE\\taller\\talleres-admin\\src-tauri\\gen\\android\\app\\build\\intermediates\\dex\\universalRelease\\minifyUniversalReleaseWithR8\\classes.dex
+path.0=classes.dex
+renamed.0=classes.dex
