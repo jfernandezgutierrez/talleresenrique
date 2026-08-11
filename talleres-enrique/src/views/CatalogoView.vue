@@ -3,7 +3,7 @@
     <!-- Page header -->
     <section class="page-hero">
       <div class="container">
-        <span class="section-tag">📦 Recambios &amp; Repuestos</span>
+        <span class="section-tag"><AppIcon name="package" :size="14" /> Recambios &amp; Repuestos</span>
         <h1 class="section-title">Catálogo de <span>Piezas</span></h1>
         <div class="divider" />
         <p class="section-desc">
@@ -46,7 +46,7 @@
             :class="{ active: store.activeCategory === 'Todos' }"
             @click="store.setCategory('Todos')"
           >
-            🔍 Todos
+            <AppIcon name="search" :size="14" /> Todos
             <span class="cat-count">{{ store.parts.length }}</span>
           </button>
           <button
@@ -89,10 +89,10 @@
           </div>
 
           <div v-else class="no-results" :key="'empty'">
-            <span class="no-icon">🔍</span>
+            <span class="no-icon"><AppIcon name="search" :size="40" /></span>
             <h3>¿No encuentras la pieza?</h3>
             <p>Envíanos la marca, el modelo, la referencia y una foto por WhatsApp y te decimos disponibilidad y precio.</p>
-            <a :href="waNotFoundUrl" target="_blank" rel="noopener" class="btn btn-whatsapp not-found-btn">💬 Enviar por WhatsApp</a>
+            <a :href="waNotFoundUrl" target="_blank" rel="noopener" class="btn btn-whatsapp not-found-btn"><AppIcon name="message-circle" /> Enviar por WhatsApp</a>
           </div>
         </Transition>
       </div>
@@ -110,6 +110,7 @@ import { usePartsStore } from '@/stores/parts'
 import { useSettingsStore } from '@/stores/settings'
 import PartCard  from '@/components/PartCard.vue'
 import PartModal from '@/components/PartModal.vue'
+import AppIcon   from '@/components/AppIcon.vue'
 
 const store        = usePartsStore()
 const settings     = useSettingsStore()
@@ -138,15 +139,16 @@ const waNotFoundUrl = computed(() => {
 
 <style scoped>
 .page-hero {
-  background: var(--green-dark);
+  background: var(--header-bg);
   padding: 4rem 0 3rem;
   text-align: center;
   border-bottom: 4px solid var(--yellow);
+  transition: background-color 0.3s ease;
 }
 
-.page-hero .section-title { color: var(--white); }
+.page-hero .section-title { color: var(--header-text); }
 .page-hero .section-tag   { background: rgba(245,197,24,0.15); color: var(--yellow); border-color: rgba(245,197,24,0.3); }
-.page-hero .section-desc  { color: rgba(255,255,255,0.72); }
+.page-hero .section-desc  { color: var(--header-text-soft); }
 .page-hero .divider       { background: linear-gradient(to right, var(--yellow), var(--green-light)); }
 
 /* Toolbar */
@@ -175,7 +177,7 @@ const waNotFoundUrl = computed(() => {
 
 .search-box.focused {
   border-color: var(--green-light);
-  background: var(--white);
+  background: var(--surface);
   box-shadow: 0 0 0 3px rgba(74,158,74,0.12);
 }
 
@@ -226,11 +228,11 @@ const waNotFoundUrl = computed(() => {
   padding: 0.5rem 1rem;
   border-radius: 20px;
   border: 2px solid var(--gray-mid);
-  background: var(--white);
+  background: var(--surface);
   color: var(--text-soft);
   font-size: 0.85rem;
   font-weight: 600;
-  transition: var(--transition);
+  transition: var(--transition), background-color 0.3s ease;
 }
 
 .cat-btn:hover {

@@ -21,14 +21,14 @@
       </span>
       <h3 class="part-name">{{ part.name }}</h3>
       <p class="part-ref">REF: {{ part.ref }}</p>
-      <p class="part-compat">🚜 {{ part.compat }}</p>
+      <p class="part-compat"><AppIcon name="tractor" :size="13" /> {{ part.compat }}</p>
       <p v-if="part.description" class="part-desc">{{ part.description }}</p>
       <div class="part-stock" :class="`stock-${part.stockStatus}`">
         <span class="dot" />
         {{ part.stockLabel }}
       </div>
       <button class="ask-btn" @click.stop="$emit('ask', part)">
-        💬 Consultar disponibilidad
+        <AppIcon name="message-circle" :size="14" /> Consultar disponibilidad
       </button>
     </div>
   </article>
@@ -36,18 +36,19 @@
 
 <script setup>
 import { getPrimaryImage } from '@/stores/parts'
+import AppIcon from '@/components/AppIcon.vue'
 defineProps({ part: { type: Object, required: true } })
 defineEmits(['ask'])
 </script>
 
 <style scoped>
 .part-card {
-  background: var(--white);
+  background: var(--surface);
   border: 1px solid var(--gray-mid);
   border-radius: var(--radius);
   overflow: hidden;
   cursor: pointer;
-  transition: var(--transition);
+  transition: var(--transition), background-color 0.3s ease;
   display: flex;
   flex-direction: column;
 }
@@ -178,12 +179,16 @@ defineEmits(['ask'])
   width: 100%;
   padding: 0.6rem;
   background: var(--green-pale);
-  color: var(--green-dark);
+  color: var(--heading);
   border-radius: var(--radius-sm);
   font-size: 0.83rem;
   font-weight: 700;
   font-family: 'Oswald', sans-serif;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   transition: var(--transition);
   border: 1px solid rgba(74,158,74,0.3);
 }

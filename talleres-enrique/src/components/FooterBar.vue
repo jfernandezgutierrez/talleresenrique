@@ -19,8 +19,8 @@
             Distribuidores oficiales de la marca <strong style="color:var(--yellow)">Rapid</strong> para toda Cantabria.
           </p>
           <div class="social-links">
-            <a :href="s.facebook_url" target="_blank" class="social-btn" aria-label="Facebook">f</a>
-            <a :href="waUrl" target="_blank" class="social-btn" aria-label="WhatsApp">💬</a>
+            <a :href="s.facebook_url" target="_blank" class="social-btn" aria-label="Facebook"><AppIcon name="facebook" :size="16" /></a>
+            <a :href="waUrl" target="_blank" class="social-btn" aria-label="WhatsApp"><AppIcon name="message-circle" :size="16" /></a>
           </div>
         </div>
 
@@ -52,13 +52,13 @@
         <div class="footer-col">
           <h4>Contacto</h4>
           <ul class="contact-list">
-            <li>📍 {{ s.address }}</li>
-            <li>💬 <a :href="waUrl" target="_blank" rel="noopener">WhatsApp: {{ s.phone }}</a></li>
-            <li>📞 <a :href="'tel:' + s.phone_link">{{ s.phone }}</a></li>
-            <li>📧 <a :href="'mailto:' + s.email">{{ s.email }}</a></li>
-            <li>🕐 Lun–Vie: {{ s.hours_weekday }}</li>
-            <li>🕐 Sáb: {{ s.hours_saturday }}</li>
-            <li>🔴 Dom: {{ s.hours_sunday }}</li>
+            <li><AppIcon name="map-pin" :size="15" /> {{ s.address }}</li>
+            <li><AppIcon name="message-circle" :size="15" /> <a :href="waUrl" target="_blank" rel="noopener">WhatsApp: {{ s.phone }}</a></li>
+            <li><AppIcon name="phone" :size="15" /> <a :href="'tel:' + s.phone_link">{{ s.phone }}</a></li>
+            <li><AppIcon name="mail" :size="15" /> <a :href="'mailto:' + s.email">{{ s.email }}</a></li>
+            <li><AppIcon name="clock" :size="15" /> Lun–Vie: {{ s.hours_weekday }}</li>
+            <li><AppIcon name="clock" :size="15" /> Sáb: {{ s.hours_saturday }}</li>
+            <li><AppIcon name="clock" :size="15" /> Dom: {{ s.hours_sunday }}</li>
           </ul>
         </div>
       </div>
@@ -73,6 +73,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
+import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
 const s = computed(() => settings.settings)
@@ -83,10 +84,11 @@ const year = new Date().getFullYear()
 
 <style scoped>
 .footer {
-  background: var(--green-dark);
-  color: rgba(255,255,255,0.75);
+  background: var(--header-bg);
+  color: var(--header-text-soft);
   padding: 3.5rem 0 1.5rem;
   border-top: 4px solid var(--yellow);
+  transition: background-color 0.3s ease;
 }
 
 .footer-grid {
@@ -129,7 +131,7 @@ const year = new Date().getFullYear()
   font-family: 'Oswald', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--white);
+  color: var(--header-text);
   line-height: 1.2;
 }
 
@@ -143,7 +145,7 @@ const year = new Date().getFullYear()
 .footer-brand p {
   font-size: 0.87rem;
   line-height: 1.7;
-  color: rgba(255,255,255,0.6);
+  color: var(--header-text-softer);
   margin-bottom: 1.2rem;
 }
 
@@ -156,13 +158,13 @@ const year = new Date().getFullYear()
   width: 38px;
   height: 38px;
   border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.08);
+  background: var(--header-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.65);
+  color: var(--header-text-soft);
   transition: var(--transition);
 }
 
@@ -190,7 +192,7 @@ const year = new Date().getFullYear()
 
 .footer-col ul li a {
   font-size: 0.87rem;
-  color: rgba(255,255,255,0.6);
+  color: var(--header-text-softer);
   transition: var(--transition);
   display: inline-block;
 }
@@ -202,14 +204,14 @@ const year = new Date().getFullYear()
 
 .contact-list li {
   font-size: 0.87rem;
-  color: rgba(255,255,255,0.6);
+  color: var(--header-text-softer);
   display: flex;
   align-items: flex-start;
   gap: 0.4rem;
 }
 
 .contact-list li a {
-  color: rgba(255,255,255,0.75);
+  color: var(--header-text-soft);
   transition: var(--transition);
 }
 
@@ -217,11 +219,12 @@ const year = new Date().getFullYear()
 
 /* Bottom */
 .footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid var(--header-border);
   padding-top: 1.5rem;
   text-align: center;
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.35);
+  color: var(--header-text-softer);
+  opacity: 0.6;
 }
 
 /* Responsive */

@@ -3,7 +3,7 @@
     <!-- Page header -->
     <section class="page-hero">
       <div class="container">
-        <span class="section-tag">📞 Hablemos</span>
+        <span class="section-tag"><AppIcon name="phone" :size="14" /> Hablemos</span>
         <h1 class="section-title">Contacta con <span>Nosotros</span></h1>
         <div class="divider" />
         <p class="section-desc">
@@ -27,7 +27,7 @@
 
             <!-- Canal de contacto principal: WhatsApp -->
             <a :href="waUrl" target="_blank" rel="noopener" class="whatsapp-card">
-              <span class="whatsapp-icon">💬</span>
+              <span class="whatsapp-icon"><AppIcon name="message-circle" :size="22" /></span>
               <span class="whatsapp-text">
                 <strong>Escríbenos por WhatsApp</strong>
                 <span>{{ s.response_time_text }}</span>
@@ -35,11 +35,11 @@
               <span class="whatsapp-arrow">→</span>
             </a>
 
-            <p class="pickup-note">🚜 {{ s.pickup_policy_text }}</p>
+            <p class="pickup-note"><AppIcon name="truck" :size="15" /> {{ s.pickup_policy_text }}</p>
 
             <div class="info-cards">
               <div class="info-card" v-for="item in contactItems" :key="item.label">
-                <div class="info-icon">{{ item.icon }}</div>
+                <div class="info-icon"><AppIcon :name="item.icon" :size="18" /></div>
                 <div class="info-text">
                   <h4>{{ item.label }}</h4>
                   <component
@@ -53,7 +53,7 @@
 
               <!-- Hours special card -->
               <div class="info-card">
-                <div class="info-icon">🕐</div>
+                <div class="info-icon"><AppIcon name="clock" :size="18" /></div>
                 <div class="info-text">
                   <h4>Horario</h4>
                   <div class="hours">
@@ -77,9 +77,9 @@
             </a>
 
             <ul class="wa-benefits">
-              <li>✅ Respuesta {{ s.response_time_text.replace('Te respondemos ', '') }}</li>
-              <li>✅ Envía fotos del problema o la pieza directamente</li>
-              <li>✅ Sin formularios ni esperas</li>
+              <li><AppIcon name="check-circle" :size="14" /> Respuesta {{ s.response_time_text.replace('Te respondemos ', '') }}</li>
+              <li><AppIcon name="check-circle" :size="14" /> Envía fotos del problema o la pieza directamente</li>
+              <li><AppIcon name="check-circle" :size="14" /> Sin formularios ni esperas</li>
             </ul>
           </div>
         </div>
@@ -91,30 +91,32 @@
 <script setup>
 import { computed } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
+import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
 const s   = computed(() => settings.settings)
 const waUrl = computed(() => settings.whatsappUrl('Hola, quería contactar con Talleres Enrique.'))
 
 const contactItems = computed(() => [
-  { icon: '📍', label: 'Dirección',  value: s.value.address },
-  { icon: '📞', label: 'Teléfono / Fax', value: s.value.phone, href: 'tel:' + s.value.phone_link },
-  { icon: '📧', label: 'Email',      value: s.value.email, href: 'mailto:' + s.value.email },
-  { icon: '📘', label: 'Facebook',   value: 'Talleres Enrique en Facebook', href: s.value.facebook_url, target: '_blank' },
+  { icon: 'map-pin', label: 'Dirección',  value: s.value.address },
+  { icon: 'phone',   label: 'Teléfono / Fax', value: s.value.phone, href: 'tel:' + s.value.phone_link },
+  { icon: 'mail',    label: 'Email',      value: s.value.email, href: 'mailto:' + s.value.email },
+  { icon: 'facebook', label: 'Facebook',   value: 'Talleres Enrique en Facebook', href: s.value.facebook_url, target: '_blank' },
 ])
 </script>
 
 <style scoped>
 .page-hero {
-  background: var(--green-dark);
+  background: var(--header-bg);
   padding: 4rem 0 3rem;
   text-align: center;
   border-bottom: 4px solid var(--yellow);
+  transition: background-color 0.3s ease;
 }
 
-.page-hero .section-title { color: var(--white); }
+.page-hero .section-title { color: var(--header-text); }
 .page-hero .section-tag   { background: rgba(245,197,24,0.15); color: var(--yellow); border-color: rgba(245,197,24,0.3); }
-.page-hero .section-desc  { color: rgba(255,255,255,0.72); }
+.page-hero .section-desc  { color: var(--header-text-soft); }
 .page-hero .divider       { background: linear-gradient(to right, var(--yellow), var(--green-light)); }
 
 /* Layout */
@@ -128,7 +130,7 @@ const contactItems = computed(() => [
 /* Info */
 .contact-info h2 {
   font-size: 1.6rem;
-  color: var(--green-dark);
+  color: var(--heading);
   margin-bottom: 0.8rem;
 }
 
@@ -177,10 +179,11 @@ const contactItems = computed(() => [
   display: flex;
   align-items: flex-start;
   gap: 0.9rem;
-  background: var(--white);
+  background: var(--surface);
   border: 1px solid var(--gray-mid);
   border-radius: var(--radius);
   padding: 1rem;
+  transition: background-color 0.3s ease;
 }
 
 .info-icon {
@@ -218,7 +221,7 @@ const contactItems = computed(() => [
   text-decoration: underline;
 }
 
-.info-text a:hover { color: var(--green-dark); }
+.info-text a:hover { color: var(--heading); }
 
 .hours { display: flex; flex-direction: column; gap: 0.2rem; }
 
@@ -234,18 +237,19 @@ const contactItems = computed(() => [
 
 /* Form card → ahora tarjeta de consulta por WhatsApp */
 .form-card {
-  background: var(--white);
+  background: var(--surface);
   border-radius: 14px;
   padding: 2.2rem 2rem;
   box-shadow: var(--shadow);
   border: 1px solid var(--gray-mid);
   text-align: center;
   align-self: center;
+  transition: background-color 0.3s ease;
 }
 
 .form-card h2 {
   font-size: 1.4rem;
-  color: var(--green-dark);
+  color: var(--heading);
   margin-bottom: 0.5rem;
 }
 
@@ -275,6 +279,9 @@ const contactItems = computed(() => [
 .wa-benefits li {
   font-size: 0.87rem;
   color: var(--text-soft);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
 }
 
 @media (max-width: 860px) {

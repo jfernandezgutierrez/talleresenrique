@@ -186,7 +186,7 @@ function getVimeoId(url) {
 }
 
 .modal {
-  background: var(--white);
+  background: var(--surface);
   border-radius: 16px;
   width: 100%;
   max-width: 900px;

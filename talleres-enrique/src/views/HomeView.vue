@@ -3,7 +3,7 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-content">
-      <div class="hero-badge">🌿 Distribuidores Rapid · Toda Cantabria</div>
+      <div class="hero-badge"><AppIcon name="leaf" :size="15" /> Distribuidores Rapid · Toda Cantabria</div>
       <h1>{{ s.hero_title }}</h1>
       <p class="hero-sub">{{ s.hero_tagline }}</p>
       <p class="hero-desc">{{ s.hero_message }}</p>
@@ -23,8 +23,8 @@
       </form>
 
       <div class="hero-btns">
-        <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp">💬 Escríbenos por WhatsApp</a>
-        <a :href="'tel:' + s.phone_link" class="btn btn-outline">📞 {{ s.phone }}</a>
+        <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp"><AppIcon name="message-circle" /> Escríbenos por WhatsApp</a>
+        <a :href="'tel:' + s.phone_link" class="btn btn-outline"><AppIcon name="phone" /> {{ s.phone }}</a>
       </div>
       <p class="hero-response">{{ s.response_time_text }}</p>
 
@@ -61,11 +61,11 @@
   <section class="section-pad about-section">
     <div class="container about-inner">
       <div class="about-text">
-        <span class="section-tag">🤝 Quiénes somos</span>
+        <span class="section-tag"><AppIcon name="users" :size="14" /> Quiénes somos</span>
         <h2 class="section-title">Tu taller de <span>confianza</span></h2>
         <div class="divider" />
         <p>{{ s.about_text }}</p>
-        <p class="about-pickup">🚜 {{ s.pickup_policy_text }}</p>
+        <p class="about-pickup"><AppIcon name="truck" :size="15" /> {{ s.pickup_policy_text }}</p>
       </div>
     </div>
   </section>
@@ -74,7 +74,7 @@
   <section class="section-pad services-preview">
     <div class="container">
       <div class="section-header">
-        <span class="section-tag">⚙️ Lo que hacemos</span>
+        <span class="section-tag"><AppIcon name="gear" :size="14" /> Lo que hacemos</span>
         <h2 class="section-title">Nuestros <span>Servicios</span></h2>
         <div class="divider" />
         <p class="section-desc">Servicio integral de reparación y mantenimiento para toda clase de maquinaria agrícola y tractores.</p>
@@ -82,7 +82,7 @@
 
       <div class="services-grid">
         <div class="service-card" v-for="srv in previewServices" :key="srv.title">
-          <div class="service-icon">{{ srv.icon }}</div>
+          <div class="service-icon"><AppIcon :name="srv.icon" :size="26" /></div>
           <h3>{{ srv.title }}</h3>
           <p>{{ srv.desc }}</p>
         </div>
@@ -103,8 +103,8 @@
           <p>Escríbenos por WhatsApp y te atendemos en el menor tiempo posible.</p>
         </div>
         <div class="cta-btns">
-          <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp">💬 WhatsApp</a>
-          <RouterLink to="/catalogo" class="btn btn-outline">📦 Ver piezas</RouterLink>
+          <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp"><AppIcon name="message-circle" /> WhatsApp</a>
+          <RouterLink to="/catalogo" class="btn btn-outline"><AppIcon name="package" /> Ver piezas</RouterLink>
         </div>
       </div>
     </div>
@@ -116,6 +116,7 @@
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
+import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
 const s = computed(() => settings.settings)
@@ -135,12 +136,12 @@ const brands = [
 ]
 
 const previewServices = [
-  { icon: '🚜', title: 'Maquinaria Agrícola',    desc: 'Reparación y mantenimiento de tractores, cosechadoras, segadoras, empacadoras y todo tipo de maquinaria de campo.' },
-  { icon: '🐄', title: 'Maquinaria Ganadera',    desc: 'Servicio técnico especializado en equipos de ordeño, refrigeración de leche y maquinaria para explotaciones ganaderas.' },
-  { icon: '🌲', title: 'Maquinaria Forestal',    desc: 'Reparación de motosierras, desbrozadoras, astilladoras, procesadoras y todo tipo de maquinaria forestal.' },
-  { icon: '🌿', title: 'Maquinaria de Jardín',   desc: 'Venta y reparación de cortacéspedes, segadoras hileradoras Rapid, tractores de jardín y herramientas de jardinería.' },
-  { icon: '🔧', title: 'Taller de Reparación',   desc: 'Diagnóstico y reparación de motores, sistemas hidráulicos, transmisiones, electricidad y soldadura.' },
-  { icon: '📦', title: 'Venta de Recambios',     desc: 'Amplio stock de piezas originales Rapid, Piva y recambios para toda clase de maquinaria agrícola y de jardín.' },
+  { icon: 'tractor', title: 'Maquinaria Agrícola',    desc: 'Reparación y mantenimiento de tractores, cosechadoras, segadoras, empacadoras y todo tipo de maquinaria de campo.' },
+  { icon: 'cow',     title: 'Maquinaria Ganadera',    desc: 'Servicio técnico especializado en equipos de ordeño, refrigeración de leche y maquinaria para explotaciones ganaderas.' },
+  { icon: 'tree',    title: 'Maquinaria Forestal',    desc: 'Reparación de motosierras, desbrozadoras, astilladoras, procesadoras y todo tipo de maquinaria forestal.' },
+  { icon: 'leaf',    title: 'Maquinaria de Jardín',   desc: 'Venta y reparación de cortacéspedes, segadoras hileradoras Rapid, tractores de jardín y herramientas de jardinería.' },
+  { icon: 'wrench',  title: 'Taller de Reparación',   desc: 'Diagnóstico y reparación de motores, sistemas hidráulicos, transmisiones, electricidad y soldadura.' },
+  { icon: 'package', title: 'Venta de Recambios',     desc: 'Amplio stock de piezas originales Rapid, Piva y recambios para toda clase de maquinaria agrícola y de jardín.' },
 ]
 </script>
 
@@ -149,12 +150,13 @@ const previewServices = [
 .hero {
   min-height: 100vh;
   background:
-    linear-gradient(135deg, rgba(26,58,26,0.9) 0%, rgba(45,106,45,0.65) 60%, rgba(26,58,26,0.85) 100%),
+    linear-gradient(135deg, var(--hero-overlay-1) 0%, var(--hero-overlay-2) 60%, var(--hero-overlay-3) 100%),
     url('/fondo.png') center / cover no-repeat;
   display: flex;
   align-items: center;
   padding: 6rem 1.5rem 4rem;
   position: relative;
+  transition: background-color 0.3s ease;
 }
 
 .hero::after {
@@ -162,7 +164,7 @@ const previewServices = [
   position: absolute;
   bottom: 0; left: 0; right: 0;
   height: 80px;
-  background: linear-gradient(to top, var(--white), transparent);
+  background: linear-gradient(to top, var(--surface), transparent);
 }
 
 .hero-content {
@@ -191,7 +193,7 @@ const previewServices = [
 
 .hero-content h1 {
   font-size: clamp(2.4rem, 6vw, 4.4rem);
-  color: var(--white);
+  color: var(--header-text);
   text-shadow: 0 2px 8px rgba(0,0,0,0.4);
   margin-bottom: 0.4rem;
   letter-spacing: 1px;
@@ -201,7 +203,7 @@ const previewServices = [
 
 .hero-sub {
   font-size: clamp(0.95rem, 2.5vw, 1.25rem);
-  color: rgba(255,255,255,0.8);
+  color: var(--header-text-soft);
   font-family: 'Oswald', sans-serif;
   letter-spacing: 2px;
   text-transform: uppercase;
@@ -210,7 +212,7 @@ const previewServices = [
 
 .hero-desc {
   font-size: 1.05rem;
-  color: rgba(255,255,255,0.75);
+  color: var(--header-text-soft);
   max-width: 560px;
   margin: 0 auto 2.5rem;
   line-height: 1.7;
@@ -249,7 +251,7 @@ const previewServices = [
 
 .hero-response {
   font-size: 0.85rem;
-  color: rgba(255,255,255,0.65);
+  color: var(--header-text-softer);
   margin-top: 0.9rem;
 }
 
@@ -268,7 +270,7 @@ const previewServices = [
   margin-top: 3.5rem;
 }
 
-.stat { text-align: center; color: var(--white); }
+.stat { text-align: center; color: var(--header-text); }
 
 .stat strong {
   display: block;
@@ -288,9 +290,10 @@ const previewServices = [
 
 /* BRANDS */
 .brands-bar {
-  background: var(--green-dark);
+  background: var(--header-bg-2);
   padding: 1.4rem 0;
-  border-top: 1px solid rgba(255,255,255,0.06);
+  border-top: 1px solid var(--header-border);
+  transition: background-color 0.3s ease;
 }
 
 .brands-inner {
@@ -305,7 +308,7 @@ const previewServices = [
   font-size: 0.74rem;
   text-transform: uppercase;
   letter-spacing: 1.5px;
-  color: rgba(255,255,255,0.4);
+  color: var(--header-text-softer);
   white-space: nowrap;
 }
 
@@ -317,9 +320,9 @@ const previewServices = [
 }
 
 .brand-chip {
-  background: rgba(255,255,255,0.07);
-  border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.65);
+  background: var(--header-border);
+  border: 1px solid var(--header-border);
+  color: var(--header-text-soft);
   padding: 0.3rem 0.85rem;
   border-radius: 20px;
   font-size: 0.82rem;
@@ -338,11 +341,11 @@ const previewServices = [
 }
 
 .service-card {
-  background: var(--white);
+  background: var(--surface);
   border-radius: var(--radius);
   padding: 1.8rem 1.5rem;
   border: 1px solid var(--gray-mid);
-  transition: var(--transition);
+  transition: var(--transition), background-color 0.3s ease;
   position: relative;
   overflow: hidden;
 }
@@ -381,7 +384,7 @@ const previewServices = [
 
 .service-card h3 {
   font-size: 1.1rem;
-  color: var(--green-dark);
+  color: var(--heading);
   margin-bottom: 0.4rem;
 }
 
@@ -393,7 +396,8 @@ const previewServices = [
 
 /* ABOUT (Quiénes somos) */
 .about-section {
-  background: var(--white);
+  background: var(--surface);
+  transition: background-color 0.3s ease;
 }
 
 .about-inner {
