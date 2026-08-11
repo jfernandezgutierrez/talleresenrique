@@ -184,6 +184,16 @@ input, textarea, select { font-family: inherit; }
   transform: translateY(-2px);
 }
 
+.btn-whatsapp {
+  background: #25d366;
+  color: #fff;
+}
+.btn-whatsapp:hover {
+  background: #1ebe5a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37,211,102,0.4);
+}
+
 /* ============================================================
    FORMULARIO COMPARTIDO
 ============================================================ */

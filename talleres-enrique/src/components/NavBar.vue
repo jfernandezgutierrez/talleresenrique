@@ -18,7 +18,8 @@
         <RouterLink to="/"          class="nav-link" active-class="active" exact-active-class="active">🏠 Inicio</RouterLink>
         <RouterLink to="/servicios" class="nav-link" active-class="active">🔧 Servicios</RouterLink>
         <RouterLink to="/catalogo"  class="nav-link" active-class="active">📦 Catálogo</RouterLink>
-        <RouterLink to="/contacto"  class="nav-link nav-cta">📞 Contactar</RouterLink>
+        <RouterLink to="/contacto"  class="nav-link" active-class="active">📞 Contacto</RouterLink>
+        <a :href="waUrl" target="_blank" rel="noopener" class="nav-link nav-cta">💬 WhatsApp</a>
       </nav>
 
       <!-- Hamburger -->
@@ -39,7 +40,8 @@
         <RouterLink to="/"          class="mob-link" @click="closeMobile">🏠 Inicio</RouterLink>
         <RouterLink to="/servicios" class="mob-link" @click="closeMobile">🔧 Servicios</RouterLink>
         <RouterLink to="/catalogo"  class="mob-link" @click="closeMobile">📦 Catálogo de Piezas</RouterLink>
-        <RouterLink to="/contacto"  class="mob-link mob-cta" @click="closeMobile">📞 Contactar</RouterLink>
+        <RouterLink to="/contacto"  class="mob-link" @click="closeMobile">📞 Contacto</RouterLink>
+        <a :href="waUrl" target="_blank" rel="noopener" class="mob-link mob-cta" @click="closeMobile">💬 Escríbenos por WhatsApp</a>
       </nav>
     </Transition>
   </header>
@@ -49,7 +51,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
+
+const settings = useSettingsStore()
+const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'))
 
 const scrolled   = ref(false)
 const mobileOpen = ref(false)
@@ -101,9 +107,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 .logo-icon {
-  width: 42px;
-  height: 42px;
-  background: var(--yellow);
+  width: 60px;
+  height:60px;  
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -163,15 +168,15 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 .nav-cta {
-  background: var(--yellow) !important;
-  color: var(--green-dark) !important;
+  background: #25d366 !important;
+  color: var(--white) !important;
   font-weight: 700 !important;
   margin-left: 0.4rem;
 }
 
 .nav-cta:hover {
-  background: var(--yellow-dark) !important;
-  color: var(--green-dark) !important;
+  background: #1ebe5a !important;
+  color: var(--white) !important;
 }
 
 .nav-admin {
@@ -236,8 +241,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 
 .mob-cta {
-  background: var(--yellow) !important;
-  color: var(--green-dark) !important;
+  background: #25d366 !important;
+  color: var(--white) !important;
   font-weight: 700 !important;
   justify-content: center;
   margin-top: 0.4rem;

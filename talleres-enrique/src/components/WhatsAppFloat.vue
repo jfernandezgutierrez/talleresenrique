@@ -1,7 +1,7 @@
 <template>
   <a
     class="wa-float"
-    href="https://wa.me/34942590301"
+    :href="waUrl"
     target="_blank"
     rel="noopener noreferrer"
     title="Escríbenos por WhatsApp"
@@ -12,6 +12,14 @@
     </svg>
   </a>
 </template>
+
+<script setup>
+import { computed } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
+
+const settings = useSettingsStore()
+const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'))
+</script>
 
 <style scoped>
 .wa-float {

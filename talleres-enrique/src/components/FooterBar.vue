@@ -19,8 +19,8 @@
             Distribuidores oficiales de la marca <strong style="color:var(--yellow)">Rapid</strong> para toda Cantabria.
           </p>
           <div class="social-links">
-            <a href="https://www.facebook.com/p/Talleres-Enrique-100069403444345/" target="_blank" class="social-btn" aria-label="Facebook">f</a>
-            <a href="https://wa.me/34942590301" target="_blank" class="social-btn" aria-label="WhatsApp">💬</a>
+            <a :href="s.facebook_url" target="_blank" class="social-btn" aria-label="Facebook">f</a>
+            <a :href="waUrl" target="_blank" class="social-btn" aria-label="WhatsApp">💬</a>
           </div>
         </div>
 
@@ -52,12 +52,13 @@
         <div class="footer-col">
           <h4>Contacto</h4>
           <ul class="contact-list">
-            <li>📍 C/ Pola Nº 2, Selaya, Cantabria</li>
-            <li>📞 <a href="tel:+34942590301">942 59 03 01</a></li>
-            <li>📧 <a href="mailto:mayteruca@hotmail.com">mayteruca@hotmail.com</a></li>
-            <li>🕐 Lun–Vie: 8:00–20:00</li>
-            <li>🕐 Sáb: 9:00–14:00</li>
-            <li>🔴 Dom: Cerrado</li>
+            <li>📍 {{ s.address }}</li>
+            <li>💬 <a :href="waUrl" target="_blank" rel="noopener">WhatsApp: {{ s.phone }}</a></li>
+            <li>📞 <a :href="'tel:' + s.phone_link">{{ s.phone }}</a></li>
+            <li>📧 <a :href="'mailto:' + s.email">{{ s.email }}</a></li>
+            <li>🕐 Lun–Vie: {{ s.hours_weekday }}</li>
+            <li>🕐 Sáb: {{ s.hours_saturday }}</li>
+            <li>🔴 Dom: {{ s.hours_sunday }}</li>
           </ul>
         </div>
       </div>
@@ -70,6 +71,13 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
+
+const settings = useSettingsStore()
+const s = computed(() => settings.settings)
+const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'))
+
 const year = new Date().getFullYear()
 </script>
 
@@ -97,10 +105,10 @@ const year = new Date().getFullYear()
 }
 
 .logo-icon {
-  width: 42px;
-  height: 42px;
-  background: var(--yellow);
-  border-radius: 8px;
+  width: 60px;
+  height: 60px;
+  
+ 
   display: flex;
   align-items: center;
   justify-content: center;

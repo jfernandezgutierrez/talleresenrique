@@ -31,6 +31,18 @@
       </div>
     </section>
 
+    <!-- Recogida / reparación fuera del taller -->
+    <section class="pickup-banner">
+      <div class="container pickup-inner">
+        <span class="pickup-icon">🚜</span>
+        <div>
+          <h3>¿Recogemos la máquina o reparamos en tu explotación?</h3>
+          <p>{{ s.pickup_policy_text }}</p>
+        </div>
+        <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp pickup-btn">💬 Consultar</a>
+      </div>
+    </section>
+
     <!-- Why us -->
     <section class="section-pad why-us">
       <div class="container">
@@ -65,6 +77,13 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
+
+const settings = useSettingsStore()
+const s = computed(() => settings.settings)
+const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre recogida o reparación en la explotación.'))
+
 const services = [
   {
     icon: '🚜', title: 'Maquinaria Agrícola',
@@ -205,6 +224,30 @@ const whyUs = [
   color: var(--green-light);
   font-weight: 700;
 }
+
+/* Pickup banner */
+.pickup-banner {
+  background: var(--green-pale);
+  border-top: 1px solid rgba(74,158,74,0.2);
+  border-bottom: 1px solid rgba(74,158,74,0.2);
+  padding: 1.8rem 0;
+}
+
+.pickup-inner {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  flex-wrap: wrap;
+}
+
+.pickup-icon { font-size: 2rem; flex-shrink: 0; }
+
+.pickup-inner h3 { font-size: 1.05rem; color: var(--green-dark); margin-bottom: 0.2rem; }
+.pickup-inner p  { font-size: 0.88rem; color: var(--text-soft); }
+
+.pickup-inner > div { flex: 1; min-width: 220px; }
+
+.pickup-btn { flex-shrink: 0; }
 
 /* Why us */
 .why-us { background: var(--gray-light); }

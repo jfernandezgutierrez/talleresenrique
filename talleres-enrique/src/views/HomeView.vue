@@ -3,22 +3,43 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-content">
-      <div class="hero-badge">🌿 Distribuidores Rapid · Selaya, Cantabria</div>
-      <h1>Talleres <span>Enrique</span></h1>
-      <p class="hero-sub">Agrícola · Ganadero · Forestal · Jardín · Ordeño</p>
-      <p class="hero-desc">
-        Venta y reparación de maquinaria en Selaya, Cantabria. Distribuidores oficiales
-        de la marca <strong>Rapid</strong> para toda Cantabria. Tu taller de confianza en el Valle de Pas.
-      </p>
+      <div class="hero-badge">🌿 Distribuidores Rapid · Toda Cantabria</div>
+      <h1>{{ s.hero_title }}</h1>
+      <p class="hero-sub">{{ s.hero_tagline }}</p>
+      <p class="hero-desc">{{ s.hero_message }}</p>
+
+      <!-- Acción principal: buscar una pieza en el catálogo -->
+      <form class="hero-search" @submit.prevent="goSearch">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+        </svg>
+        <input
+          v-model="query"
+          type="text"
+          placeholder="Busca una pieza por nombre, referencia o modelo…"
+          aria-label="Buscar pieza en el catálogo"
+        />
+        <button type="submit" class="btn btn-primary hero-search-btn">Buscar pieza</button>
+      </form>
+
       <div class="hero-btns">
-        <RouterLink to="/catalogo" class="btn btn-primary">📦 Ver catálogo de piezas</RouterLink>
-        <RouterLink to="/contacto" class="btn btn-outline">📞 Contactar</RouterLink>
+        <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp">💬 Escríbenos por WhatsApp</a>
+        <a :href="'tel:' + s.phone_link" class="btn btn-outline">📞 {{ s.phone }}</a>
       </div>
+      <p class="hero-response">{{ s.response_time_text }}</p>
 
       <div class="hero-stats">
-        <div class="stat" v-for="s in stats" :key="s.label">
-          <strong>{{ s.value }}</strong>
-          <span>{{ s.label }}</span>
+        <div class="stat">
+          <strong>{{ s.stat_years }}</strong>
+          <span>Años de experiencia</span>
+        </div>
+        <div class="stat">
+          <strong>{{ s.stat_repairs }}</strong>
+          <span>Máquinas reparadas</span>
+        </div>
+        <div class="stat">
+          <strong>{{ s.stat_stock }}</strong>
+          <span>Piezas en stock</span>
         </div>
       </div>
     </div>
@@ -35,6 +56,19 @@
       </div>
     </div>
   </div>
+
+  <!-- QUIÉNES SOMOS (sección breve, sin página aparte) -->
+  <section class="section-pad about-section">
+    <div class="container about-inner">
+      <div class="about-text">
+        <span class="section-tag">🤝 Quiénes somos</span>
+        <h2 class="section-title">Tu taller de <span>confianza</span></h2>
+        <div class="divider" />
+        <p>{{ s.about_text }}</p>
+        <p class="about-pickup">🚜 {{ s.pickup_policy_text }}</p>
+      </div>
+    </div>
+  </section>
 
   <!-- SERVICIOS PREVIEW -->
   <section class="section-pad services-preview">
@@ -66,10 +100,10 @@
       <div class="cta-inner">
         <div>
           <h2>¿Tu máquina tiene una avería?</h2>
-          <p>Llámanos o escríbenos y te atendemos en el menor tiempo posible.</p>
+          <p>Escríbenos por WhatsApp y te atendemos en el menor tiempo posible.</p>
         </div>
         <div class="cta-btns">
-          <a href="tel:+34942590301" class="btn btn-primary">📞 942 59 03 01</a>
+          <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp">💬 WhatsApp</a>
           <RouterLink to="/catalogo" class="btn btn-outline">📦 Ver piezas</RouterLink>
         </div>
       </div>
@@ -79,12 +113,21 @@
 </template>
 
 <script setup>
-const stats = [
-  { value: '+20', label: 'Años de experiencia' },
-  { value: '+500', label: 'Máquinas reparadas' },
-  { value: '+1.200', label: 'Piezas en stock' },
-  { value: '24h', label: 'Respuesta urgente' },
-]
+import { ref, computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useSettingsStore } from '@/stores/settings'
+
+const settings = useSettingsStore()
+const s = computed(() => settings.settings)
+const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'))
+
+const router = useRouter()
+const query  = ref('')
+
+// Acción principal del sitio: buscar una pieza en el catálogo
+function goSearch() {
+  router.push({ path: '/catalogo', query: query.value.trim() ? { q: query.value.trim() } : {} })
+}
 
 const brands = [
   '⭐ Rapid','⭐ Piva','John Deere','Fendt','Case IH','New Holland',
@@ -107,7 +150,7 @@ const previewServices = [
   min-height: 100vh;
   background:
     linear-gradient(135deg, rgba(26,58,26,0.9) 0%, rgba(45,106,45,0.65) 60%, rgba(26,58,26,0.85) 100%),
-    url('https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1600&auto=format&fit=crop&q=80') center / cover no-repeat;
+    url('/fondo.png') center / cover no-repeat;
   display: flex;
   align-items: center;
   padding: 6rem 1.5rem 4rem;
@@ -171,6 +214,43 @@ const previewServices = [
   max-width: 560px;
   margin: 0 auto 2.5rem;
   line-height: 1.7;
+}
+
+/* Búsqueda de catálogo: acción principal destacada en toda la web */
+.hero-search {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255,255,255,0.96);
+  border-radius: 50px;
+  padding: 0.5rem 0.5rem 0.5rem 1.2rem;
+  max-width: 560px;
+  margin: 0 auto 1.4rem;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+
+.hero-search svg { color: var(--gray-dark); flex-shrink: 0; }
+
+.hero-search input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: var(--text-main);
+  min-width: 0;
+}
+
+.hero-search-btn {
+  padding: 0.7rem 1.4rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.hero-response {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.65);
+  margin-top: 0.9rem;
 }
 
 .hero-btns {
@@ -311,6 +391,33 @@ const previewServices = [
   line-height: 1.65;
 }
 
+/* ABOUT (Quiénes somos) */
+.about-section {
+  background: var(--white);
+}
+
+.about-inner {
+  max-width: 760px;
+}
+
+.about-text {
+  text-align: center;
+  margin: 0 auto;
+}
+
+.about-text p {
+  font-size: 1rem;
+  color: var(--text-soft);
+  line-height: 1.75;
+  margin-top: 0.5rem;
+}
+
+.about-pickup {
+  margin-top: 1rem !important;
+  color: var(--green-mid) !important;
+  font-weight: 600;
+}
+
 /* CTA STRIP */
 .cta-strip {
   background: var(--green-mid);
@@ -346,6 +453,9 @@ const previewServices = [
 @media (max-width: 640px) {
   .hero { padding: 5rem 1rem 3rem; }
   .hero-stats { gap: 1.2rem; }
+  .hero-search { flex-wrap: wrap; border-radius: 20px; padding: 0.7rem; }
+  .hero-search input { width: 100%; padding: 0.4rem 0; }
+  .hero-search-btn { width: 100%; justify-content: center; }
   .cta-inner { flex-direction: column; text-align: center; }
   .cta-btns { justify-content: center; }
 }

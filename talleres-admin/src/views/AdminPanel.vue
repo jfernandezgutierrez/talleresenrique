@@ -181,6 +181,121 @@
         </div>
       </template>
 
+      <!-- ── CONFIGURACIÓN DEL SITIO ─────────────────────────────────── -->
+      <template v-else-if="activeTab === 'settings'">
+        <div class="settings-wrap">
+
+          <section class="settings-card">
+            <h3>📞 Contacto</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Teléfono (texto a mostrar)</label>
+                <input v-model="sf.phone" type="text" placeholder="942 59 03 01" />
+              </div>
+              <div class="form-group">
+                <label>Teléfono (enlace tel:)</label>
+                <input v-model="sf.phone_link" type="text" placeholder="+34942590301" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Número de WhatsApp (canal de contacto principal)</label>
+              <input v-model="sf.whatsapp_number" type="text" placeholder="34942590301" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email</label>
+                <input v-model="sf.email" type="email" placeholder="correo@ejemplo.com" />
+              </div>
+              <div class="form-group">
+                <label>Facebook</label>
+                <input v-model="sf.facebook_url" type="text" placeholder="https://facebook.com/…" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Dirección</label>
+              <input v-model="sf.address" type="text" placeholder="C/ Pola Nº 2, Selaya, Cantabria" />
+            </div>
+          </section>
+
+          <section class="settings-card">
+            <h3>🕐 Horario y tiempo de respuesta</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Lunes – Viernes</label>
+                <input v-model="sf.hours_weekday" type="text" placeholder="8:00 – 20:00" />
+              </div>
+              <div class="form-group">
+                <label>Sábados</label>
+                <input v-model="sf.hours_saturday" type="text" placeholder="9:00 – 14:00" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Domingos</label>
+                <input v-model="sf.hours_sunday" type="text" placeholder="Cerrado" />
+              </div>
+              <div class="form-group">
+                <label>Plazo de respuesta (se muestra en Contacto y WhatsApp)</label>
+                <input v-model="sf.response_time_text" type="text" placeholder="Te respondemos en horario comercial" />
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-card">
+            <h3>🏠 Portada y mensajes</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Título (hero)</label>
+                <input v-model="sf.hero_title" type="text" placeholder="Talleres Enrique" />
+              </div>
+              <div class="form-group">
+                <label>Subtítulo (hero)</label>
+                <input v-model="sf.hero_tagline" type="text" placeholder="Agrícola · Ganadero · Forestal · Jardín · Ordeño" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Mensaje principal de la portada</label>
+              <textarea v-model="sf.hero_message" rows="2" placeholder="Venta, reparación y recambios para maquinaria agrícola, ganadera, forestal y de jardín" />
+            </div>
+            <div class="form-group">
+              <label>Texto "Quiénes somos" (sección breve en Inicio)</label>
+              <textarea v-model="sf.about_text" rows="3" />
+            </div>
+            <div class="form-group">
+              <label>Recogida / reparación fuera del taller</label>
+              <textarea v-model="sf.pickup_policy_text" rows="2" />
+            </div>
+          </section>
+
+          <section class="settings-card">
+            <h3>📊 Estadísticas de portada</h3>
+            <div class="form-row-3">
+              <div class="form-group">
+                <label>Años de experiencia</label>
+                <input v-model="sf.stat_years" type="text" placeholder="+20" />
+              </div>
+              <div class="form-group">
+                <label>Máquinas reparadas</label>
+                <input v-model="sf.stat_repairs" type="text" placeholder="+500" />
+              </div>
+              <div class="form-group">
+                <label>Piezas en stock</label>
+                <input v-model="sf.stat_stock" type="text" placeholder="+1.200" />
+              </div>
+            </div>
+          </section>
+
+          <p v-if="settingsStore.error" class="settings-error">⚠️ {{ settingsStore.error }}</p>
+
+          <div class="settings-actions">
+            <span v-if="settingsSaved" class="settings-saved">✅ Guardado</span>
+            <button class="btn btn-secondary" @click="saveSiteSettings" :disabled="settingsStore.saving">
+              {{ settingsStore.saving ? '⏳ Guardando…' : '💾 Guardar configuración' }}
+            </button>
+          </div>
+        </div>
+      </template>
+
     </main>
 
     <!-- ══ MODAL PIEZA ══════════════════════════════════════════════════ -->
@@ -395,14 +510,20 @@ import { ref, computed, reactive, watch, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePartsStore, getPrimaryImage } from '@/stores/parts'
 import { useAuthStore  } from '@/stores/auth'
+import { useSettingsStore, defaultSettings } from '@/stores/settings'
 import { supabase, BUCKET } from '@/lib/supabase'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 
-const store  = usePartsStore()
-const auth   = useAuthStore()
-const router = useRouter()
+const store         = usePartsStore()
+const auth          = useAuthStore()
+const router        = useRouter()
+const settingsStore = useSettingsStore()
 
-onMounted(() => store.loadAll())
+onMounted(async () => {
+  store.loadAll()
+  await settingsStore.loadSettings()
+  Object.assign(sf, settingsStore.settings)
+})
 
 // ── Sidebar ───────────────────────────────────────────────────────────────
 const sidebarCollapsed = ref(false)
@@ -410,10 +531,24 @@ const sidebarCollapsed = ref(false)
 // ── Tabs ──────────────────────────────────────────────────────────────────
 const activeTab = ref('parts')
 const tabs = computed(() => [
-  { id: 'parts', icon: '📦', label: 'Piezas',     badge: store.parts.length },
-  { id: 'cats',  icon: '🗂️', label: 'Categorías', badge: store.catDefs.length },
+  { id: 'parts',    icon: '📦', label: 'Piezas',        badge: store.parts.length },
+  { id: 'cats',     icon: '🗂️', label: 'Categorías',    badge: store.catDefs.length },
+  { id: 'settings', icon: '⚙️', label: 'Configuración', badge: 0 },
 ])
 const currentTab = computed(() => tabs.value.find(t => t.id === activeTab.value))
+
+// ── Configuración del sitio ──────────────────────────────────────────────
+const sf = reactive(defaultSettings())
+const settingsSaved = ref(false)
+
+async function saveSiteSettings() {
+  settingsSaved.value = false
+  const ok = await settingsStore.saveSettings({ ...sf })
+  if (ok) {
+    settingsSaved.value = true
+    setTimeout(() => { settingsSaved.value = false }, 2500)
+  }
+}
 
 // ── Filters & Pagination ──────────────────────────────────────────────────
 const partSearch    = ref('')
@@ -1258,6 +1393,56 @@ code { background: var(--gray-light); padding: 2px 5px; border-radius: 4px; font
 .video-url-input input { flex: 1; }
 .video-url-input .btn  { white-space: nowrap; flex-shrink: 0; }
 
+/* ── Configuración del sitio ────────────────────────────────────────── */
+.settings-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+  max-width: 760px;
+}
+
+.settings-card {
+  background: var(--white);
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius);
+  padding: 1.4rem 1.5rem;
+}
+
+.settings-card h3 {
+  font-size: 1rem;
+  color: var(--green-dark);
+  margin-bottom: 1rem;
+}
+
+.form-row-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.settings-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.9rem;
+  padding-bottom: 1rem;
+}
+
+.settings-saved {
+  font-size: 0.85rem;
+  color: #16a34a;
+  font-weight: 600;
+}
+
+.settings-error {
+  font-size: 0.85rem;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  padding: 0.6rem 0.9rem;
+  border-radius: var(--radius-sm);
+}
+
 /* Responsive */
 @media (max-width: 640px) {
   .admin-main { padding: 1rem; }
@@ -1266,5 +1451,6 @@ code { background: var(--gray-light); padding: 2px 5px; border-radius: 4px; font
   .media-grid { grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); }
   .video-add-row { flex-direction: column; }
   .video-url-input { min-width: 100%; }
+  .form-row-3 { grid-template-columns: 1fr; }
 }
 </style>

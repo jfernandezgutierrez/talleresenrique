@@ -90,8 +90,9 @@
 
           <div v-else class="no-results" :key="'empty'">
             <span class="no-icon">🔍</span>
-            <h3>Sin resultados</h3>
-            <p>Prueba con otro término o categoría.<br />También puedes <RouterLink to="/contacto">contactarnos directamente</RouterLink>.</p>
+            <h3>¿No encuentras la pieza?</h3>
+            <p>Envíanos la marca, el modelo, la referencia y una foto por WhatsApp y te decimos disponibilidad y precio.</p>
+            <a :href="waNotFoundUrl" target="_blank" rel="noopener" class="btn btn-whatsapp not-found-btn">💬 Enviar por WhatsApp</a>
           </div>
         </Transition>
       </div>
@@ -103,22 +104,36 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 import { usePartsStore } from '@/stores/parts'
+import { useSettingsStore } from '@/stores/settings'
 import PartCard  from '@/components/PartCard.vue'
 import PartModal from '@/components/PartModal.vue'
 
 const store        = usePartsStore()
+const settings     = useSettingsStore()
+const route        = useRoute()
 const selectedPart = ref(null)
 const searchFocused = ref(false)
 
 onMounted(() => {
   if (store.parts.length === 0) store.loadAll()
+  // Si venimos del buscador de la portada (?q=...), precargamos el término
+  if (route.query.q) store.searchQuery = String(route.query.q)
 })
 
 function openModal(part) {
   selectedPart.value = part
 }
+
+const waNotFoundUrl = computed(() => {
+  const q = store.searchQuery.trim()
+  const msg = q
+    ? `Hola, no encuentro esta pieza en el catálogo: "${q}". Marca, modelo, referencia: … Os adjunto una foto.`
+    : `Hola, no encuentro una pieza en el catálogo. Marca, modelo, referencia: … Os adjunto una foto.`
+  return settings.whatsappUrl(msg)
+})
 </script>
 
 <style scoped>
@@ -263,12 +278,17 @@ function openModal(part) {
   margin-bottom: 0.5rem;
 }
 
-.no-results p { font-size: 0.92rem; line-height: 1.6; }
+.no-results p { font-size: 0.92rem; line-height: 1.6; max-width: 420px; margin: 0 auto; }
 
 .no-results a {
   color: var(--green-mid);
   font-weight: 600;
   text-decoration: underline;
+}
+
+.not-found-btn {
+  margin-top: 1.5rem;
+  text-decoration: none !important;
 }
 
 .loading-state,

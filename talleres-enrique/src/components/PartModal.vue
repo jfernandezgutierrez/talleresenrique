@@ -15,46 +15,49 @@
             <!-- Galería -->
             <div class="gallery-col">
 
-              <!-- Carrusel principal -->
-              <div v-if="allImages.length" class="carousel">
+              <!-- Carrusel principal (imágenes y vídeos mezclados) -->
+              <div v-if="allMedia.length" class="carousel">
                 <div class="carousel-main">
-                  <img :src="allImages[activeImg].url" :alt="part.name" class="carousel-img" />
-                  <button v-if="allImages.length > 1" class="carousel-arrow left"  @click="prevImg">‹</button>
-                  <button v-if="allImages.length > 1" class="carousel-arrow right" @click="nextImg">›</button>
-                  <div v-if="allImages.length > 1" class="carousel-dots">
-                    <button v-for="(_, i) in allImages" :key="i"
-                      class="carousel-dot" :class="{ active: i === activeImg }"
-                      @click="activeImg = i" />
+
+                  <!-- Slide: imagen -->
+                  <img v-if="activeItem.type === 'image'" :src="activeItem.url" :alt="part.name" class="carousel-img" />
+
+                  <!-- Slide: vídeo -->
+                  <div v-else class="video-embed-wrap">
+                    <iframe v-if="getYoutubeId(activeItem.url)"
+                      :src="`https://www.youtube.com/embed/${getYoutubeId(activeItem.url)}`"
+                      class="video-iframe" frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
+                    <iframe v-else-if="getVimeoId(activeItem.url)"
+                      :src="`https://player.vimeo.com/video/${getVimeoId(activeItem.url)}`"
+                      class="video-iframe" frameborder="0"
+                      allow="autoplay; fullscreen; picture-in-picture" allowfullscreen />
+                    <video v-else :src="activeItem.url" class="video-direct" controls preload="metadata" />
+                  </div>
+
+                  <button v-if="allMedia.length > 1" class="carousel-arrow left"  @click="prevItem">‹</button>
+                  <button v-if="allMedia.length > 1" class="carousel-arrow right" @click="nextItem">›</button>
+                  <div v-if="allMedia.length > 1" class="carousel-dots">
+                    <button v-for="(_, i) in allMedia" :key="i"
+                      class="carousel-dot" :class="{ active: i === activeIdx }"
+                      @click="activeIdx = i" />
                   </div>
                 </div>
-                <div v-if="allImages.length > 1" class="carousel-thumbs">
-                  <button v-for="(img, i) in allImages" :key="i"
-                    class="thumb-btn" :class="{ active: i === activeImg }"
-                    @click="activeImg = i">
-                    <img :src="img.url" :alt="'Imagen ' + (i+1)" />
+                <div v-if="allMedia.length > 1" class="carousel-thumbs">
+                  <button v-for="(item, i) in allMedia" :key="i"
+                    class="thumb-btn" :class="{ active: i === activeIdx, 'is-video': item.type === 'video' }"
+                    @click="activeIdx = i">
+                    <img v-if="item.type === 'image'" :src="item.url" :alt="'Imagen ' + (i+1)" />
+                    <img v-else-if="getYoutubeId(item.url)" :src="`https://img.youtube.com/vi/${getYoutubeId(item.url)}/default.jpg`" :alt="'Vídeo ' + (i+1)" />
+                    <span v-else class="thumb-video-icon">🎬</span>
+                    <span v-if="item.type === 'video'" class="thumb-play">▶</span>
                   </button>
                 </div>
               </div>
 
-              <!-- Sin imagen: emoji grande -->
+              <!-- Sin imagen ni vídeo: emoji grande -->
               <div v-else class="no-image-placeholder">
                 <span>{{ part.emoji }}</span>
-              </div>
-
-              <!-- Vídeos -->
-              <div v-if="allVideos.length" class="videos-section">
-                <h4 class="videos-title">🎬 Vídeos</h4>
-                <div v-for="(vid, i) in allVideos" :key="i" class="video-embed-wrap">
-                  <iframe v-if="getYoutubeId(vid.url)"
-                    :src="`https://www.youtube.com/embed/${getYoutubeId(vid.url)}`"
-                    class="video-iframe" frameborder="0"
-                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
-                  <iframe v-else-if="getVimeoId(vid.url)"
-                    :src="`https://player.vimeo.com/video/${getVimeoId(vid.url)}`"
-                    class="video-iframe" frameborder="0"
-                    allow="autoplay; fullscreen; picture-in-picture" allowfullscreen />
-                  <video v-else :src="vid.url" class="video-direct" controls preload="metadata" />
-                </div>
               </div>
             </div>
 
@@ -93,51 +96,14 @@
                 <p class="desc-text">{{ part.description }}</p>
               </div>
 
-              <!-- Acciones rápidas -->
+              <!-- Acción de consulta: solo WhatsApp -->
               <div class="quick-actions">
                 <a class="action-btn whatsapp" :href="whatsappUrl" target="_blank" rel="noopener">
                   <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.107 1.521 5.833L.057 23.571a.5.5 0 0 0 .612.612l5.638-1.47A11.934 11.934 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.866 9.866 0 0 1-5.032-1.378l-.36-.214-3.733.973.999-3.627-.235-.373A9.867 9.867 0 0 1 2.118 12C2.118 6.533 6.533 2.118 12 2.118S21.882 6.533 21.882 12 17.467 21.882 12 21.882z"/></svg>
                   Consultar por WhatsApp
                 </a>
-                <button class="action-btn form-toggle" @click="showForm = !showForm">
-                  {{ showForm ? '✕ Cerrar formulario' : '📨 Enviar consulta' }}
-                </button>
+                <p class="quick-actions-hint">Te respondemos directamente por WhatsApp con disponibilidad y precio.</p>
               </div>
-
-              <!-- Formulario -->
-              <Transition name="slide-down">
-                <div v-if="showForm" class="consult-form">
-                  <Transition name="fade" mode="out-in">
-                    <div v-if="!sent" key="form">
-                      <div class="form-row">
-                        <div class="form-group">
-                          <label>Nombre <span class="req">*</span></label>
-                          <input v-model="form.name" type="text" placeholder="Tu nombre" />
-                        </div>
-                        <div class="form-group">
-                          <label>Teléfono <span class="req">*</span></label>
-                          <input v-model="form.phone" type="tel" placeholder="Tu teléfono" />
-                        </div>
-                      </div>
-                      <div class="form-group">
-                        <label>Máquina / Modelo</label>
-                        <input v-model="form.machine" type="text" placeholder="p.ej. John Deere 6130R…" />
-                      </div>
-                      <div class="form-group">
-                        <label>Comentario</label>
-                        <textarea v-model="form.message" placeholder="Cantidad, urgencia, descripción del problema…" rows="3" />
-                      </div>
-                      <p v-if="errorMsg" class="error-msg">{{ errorMsg }}</p>
-                      <button class="btn btn-secondary" style="width:100%" @click="submit">📨 Enviar consulta</button>
-                    </div>
-                    <div v-else key="success" class="success-inline">
-                      <div class="success-icon">✅</div>
-                      <strong>¡Consulta enviada!</strong>
-                      <p>Te contactaremos en breve con disponibilidad y precio.</p>
-                    </div>
-                  </Transition>
-                </div>
-              </Transition>
 
             </div>
           </div>
@@ -150,17 +116,14 @@
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
 
 const props = defineProps({ part: { type: Object, default: null } })
 const emit  = defineEmits(['close'])
 
-const sent      = ref(false)
-const errorMsg  = ref('')
-const showForm  = ref(false)
-const activeImg = ref(0)
-const form      = ref({ name: '', phone: '', machine: '', message: '' })
+const settings = useSettingsStore()
 
-const PHONE = '34XXXXXXXXX' // ← Cambia por el teléfono real del taller
+const activeIdx = ref(0)
 
 const allImages = computed(() => {
   if (!props.part) return []
@@ -178,27 +141,26 @@ const allVideos = computed(() =>
   props.part ? (props.part.media || []).filter(m => m.type === 'video') : []
 )
 
+// Un único carrusel: primero las imágenes (principal primero), luego los vídeos
+const allMedia = computed(() => [...allImages.value, ...allVideos.value])
+const activeItem = computed(() => allMedia.value[activeIdx.value] || {})
+
 const whatsappUrl = computed(() => {
   if (!props.part) return '#'
-  const msg = encodeURIComponent(
+  const msg =
     `Hola, me interesa la pieza *${props.part.name}*` +
     (props.part.ref ? ` (REF: ${props.part.ref})` : '') +
     `. ¿Podéis informarme sobre disponibilidad y precio?`
-  )
-  return `https://wa.me/${PHONE}?text=${msg}`
+  return settings.whatsappUrl(msg)
 })
 
 watch(() => props.part, () => {
-  sent.value     = false
-  errorMsg.value = ''
-  showForm.value = false
-  activeImg.value = 0
-  form.value     = { name: '', phone: '', machine: '', message: '' }
+  activeIdx.value = 0
 })
 watch(() => props.part, val => { document.body.style.overflow = val ? 'hidden' : '' })
 
-function prevImg() { activeImg.value = (activeImg.value - 1 + allImages.value.length) % allImages.value.length }
-function nextImg() { activeImg.value = (activeImg.value + 1) % allImages.value.length }
+function prevItem() { activeIdx.value = (activeIdx.value - 1 + allMedia.value.length) % allMedia.value.length }
+function nextItem() { activeIdx.value = (activeIdx.value + 1) % allMedia.value.length }
 
 function getYoutubeId(url) {
   const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)
@@ -207,16 +169,6 @@ function getYoutubeId(url) {
 function getVimeoId(url) {
   const m = url?.match(/vimeo\.com\/(\d+)/)
   return m ? m[1] : null
-}
-
-function submit() {
-  errorMsg.value = ''
-  if (!form.value.name.trim() || !form.value.phone.trim()) {
-    errorMsg.value = 'Por favor, rellena al menos tu nombre y teléfono.'
-    return
-  }
-  console.log('Consulta:', props.part?.ref, form.value)
-  sent.value = true
 }
 </script>
 
@@ -374,27 +326,35 @@ function submit() {
 }
 .thumb-btn.active { border-color: var(--yellow); }
 .thumb-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.thumb-btn.is-video { position: relative; }
 
-/* Videos in gallery */
-.videos-section {
-  padding: 0.6rem;
-  background: #1a1a1a;
-  flex-shrink: 0;
+.thumb-video-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #333;
+  font-size: 1.1rem;
 }
-.videos-title {
-  font-size: 0.72rem;
-  color: rgba(255,255,255,0.5);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 700;
-  margin-bottom: 0.4rem;
+
+.thumb-play {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 0.85rem;
+  background: rgba(0,0,0,0.35);
+  pointer-events: none;
 }
+
+/* Vídeo dentro del carrusel principal */
 .video-embed-wrap {
-  border-radius: 6px;
-  overflow: hidden;
-  aspect-ratio: 16/9;
+  position: absolute;
+  inset: 0;
   background: #000;
-  margin-bottom: 0.5rem;
 }
 .video-iframe,
 .video-direct {
@@ -527,42 +487,12 @@ code {
   color: #fff;
 }
 .action-btn.whatsapp:hover { background: #1ebe5a; }
-.action-btn.form-toggle {
-  background: var(--green-pale);
-  color: var(--green-dark);
-  border: 1px solid rgba(74,158,74,0.3);
-}
-.action-btn.form-toggle:hover { background: var(--green-mid); color: #fff; }
-
-/* Consult form */
-.consult-form {
-  border-top: 1px solid var(--gray-mid);
-  padding-top: 1rem;
-}
-.error-msg {
-  font-size: 0.83rem;
-  color: #dc2626;
-  background: #fef2f2;
-  border: 1px solid #fecaca;
-  padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  margin-bottom: 0.5rem;
-}
-.success-inline {
+.quick-actions-hint {
   text-align: center;
-  padding: 1.5rem 1rem;
+  font-size: 0.8rem;
+  color: var(--text-soft);
+  margin-top: 0.4rem;
 }
-.success-inline .success-icon { font-size: 2.5rem; display: block; margin-bottom: 0.5rem; }
-.success-inline strong { display: block; font-size: 1.05rem; color: var(--green-dark); margin-bottom: 0.3rem; }
-.success-inline p { font-size: 0.85rem; color: var(--text-soft); }
-
-/* Slide-down transition for form */
-.slide-down-enter-active,
-.slide-down-leave-active { transition: all 0.25s ease; overflow: hidden; }
-.slide-down-enter-from,
-.slide-down-leave-to { opacity: 0; max-height: 0; }
-.slide-down-enter-to,
-.slide-down-leave-from { opacity: 1; max-height: 600px; }
 
 /* Fade transition */
 .fade-enter-active,
