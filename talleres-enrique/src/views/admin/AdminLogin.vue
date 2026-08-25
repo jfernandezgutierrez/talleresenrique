@@ -9,18 +9,28 @@
 
       <form @submit.prevent="doLogin" class="login-form">
         <div class="form-group">
-          <label>Contraseña</label>
+          <label for="admin-email">Correo</label>
           <input
-            v-model="password"
-            type="password"
-            placeholder="Introduce la contraseña"
+            id="admin-email"
+            v-model.trim="email"
+            type="email"
+            autocomplete="username"
+            required
             autofocus
           />
         </div>
+        <div class="form-group">
+          <label for="admin-password">Contraseña</label>
+          <input
+            id="admin-password"
+            v-model="password"
+            type="password"
+            autocomplete="current-password"
+            required
+          />
+        </div>
         <p v-if="error" class="error-msg">{{ error }}</p>
-        <button type="submit" class="btn btn-secondary login-btn">
-          🔐 Entrar al panel
-        </button>
+        <button type="submit" class="btn btn-secondary login-btn">🔐 Entrar al panel</button>
       </form>
 
       <RouterLink to="/" class="back-link">← Volver a la web</RouterLink>
@@ -33,17 +43,19 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-const auth     = useAuthStore()
-const router   = useRouter()
+const auth = useAuthStore()
+const router = useRouter()
+const email = ref('')
 const password = ref('')
-const error    = ref('')
+const error = ref('')
 
-function doLogin() {
+async function doLogin() {
   error.value = ''
-  if (auth.login(password.value)) {
+  const result = await auth.login(email.value, password.value)
+  if (result.ok) {
     router.push('/admin')
   } else {
-    error.value = 'Contraseña incorrecta. Inténtalo de nuevo.'
+    error.value = result.message
     password.value = ''
   }
 }
@@ -66,7 +78,7 @@ function doLogin() {
   width: 100%;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .login-logo {
@@ -100,7 +112,9 @@ function doLogin() {
   margin-bottom: 1.8rem;
 }
 
-.login-form { text-align: left; }
+.login-form {
+  text-align: left;
+}
 
 .login-btn {
   width: 100%;
@@ -127,5 +141,7 @@ function doLogin() {
   transition: var(--transition);
 }
 
-.back-link:hover { color: var(--green-mid); }
+.back-link:hover {
+  color: var(--green-mid);
+}
 </style>

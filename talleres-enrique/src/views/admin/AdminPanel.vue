@@ -1,6 +1,5 @@
 <template>
   <div class="admin-wrap">
-
     <!-- Sidebar -->
     <aside class="sidebar">
       <div class="sidebar-logo">
@@ -34,7 +33,6 @@
 
     <!-- Main content -->
     <main class="admin-main">
-
       <!-- ── PIEZAS tab ───────────────────────────────────────────── -->
       <section v-if="activeTab === 'parts'">
         <div class="admin-header">
@@ -47,10 +45,17 @@
 
         <!-- Filters -->
         <div class="filter-bar">
-          <input v-model="partSearch" type="text" placeholder="🔍 Buscar pieza…" class="filter-input" />
+          <input
+            v-model="partSearch"
+            type="text"
+            placeholder="🔍 Buscar pieza…"
+            class="filter-input"
+          />
           <select v-model="partCatFilter" class="filter-select">
             <option value="">Todas las categorías</option>
-            <option v-for="c in store.catDefs" :key="c.id" :value="c.name">{{ c.icon }} {{ c.name }}</option>
+            <option v-for="c in store.catDefs" :key="c.id" :value="c.name">
+              {{ c.icon }} {{ c.name }}
+            </option>
           </select>
         </div>
 
@@ -77,20 +82,34 @@
                 </td>
                 <td>
                   <strong>{{ part.name }}</strong>
-                  <div v-if="part.description" class="part-desc-preview">{{ part.description.substring(0, 60) }}{{ part.description.length > 60 ? '…' : '' }}</div>
+                  <div v-if="part.description" class="part-desc-preview">
+                    {{ part.description.substring(0, 60)
+                    }}{{ part.description.length > 60 ? '…' : '' }}
+                  </div>
                 </td>
-                <td><code>{{ part.ref }}</code></td>
                 <td>
-                  <span class="cat-badge" :style="{ background: part.catColor + '22', color: part.catColor, borderColor: part.catColor + '55' }">
+                  <code>{{ part.ref }}</code>
+                </td>
+                <td>
+                  <span
+                    class="cat-badge"
+                    :style="{
+                      background: part.catColor + '22',
+                      color: part.catColor,
+                      borderColor: part.catColor + '55',
+                    }"
+                  >
                     {{ part.category }}
                   </span>
                 </td>
+                <td><span class="stock-dot" :class="part.stockStatus" /> {{ part.stockLabel }}</td>
                 <td>
-                  <span class="stock-dot" :class="part.stockStatus" /> {{ part.stockLabel }}
-                </td>
-                <td>
-                  <button class="icon-btn edit" @click="openPartModal(part)" title="Editar">✏️</button>
-                  <button class="icon-btn del"  @click="confirmDeletePart(part)" title="Eliminar">🗑️</button>
+                  <button class="icon-btn edit" @click="openPartModal(part)" title="Editar">
+                    ✏️
+                  </button>
+                  <button class="icon-btn del" @click="confirmDeletePart(part)" title="Eliminar">
+                    🗑️
+                  </button>
                 </td>
               </tr>
               <tr v-if="filteredAdminParts.length === 0">
@@ -118,16 +137,17 @@
             </div>
             <div class="cat-card-info">
               <strong>{{ cat.name }}</strong>
-              <span>{{ store.parts.filter(p => p.category === cat.name).length }} piezas</span>
+              <span>{{ store.parts.filter((p) => p.category === cat.name).length }} piezas</span>
             </div>
             <div class="cat-card-actions">
               <button class="icon-btn edit" @click="openCatModal(cat)" title="Editar">✏️</button>
-              <button class="icon-btn del"  @click="confirmDeleteCat(cat)" title="Eliminar">🗑️</button>
+              <button class="icon-btn del" @click="confirmDeleteCat(cat)" title="Eliminar">
+                🗑️
+              </button>
             </div>
           </div>
         </div>
       </section>
-
     </main>
 
     <!-- ══════════ PART MODAL ══════════ -->
@@ -157,7 +177,9 @@
                   <label>Categoría <span class="req">*</span></label>
                   <select v-model="partForm.category">
                     <option value="">Seleccionar…</option>
-                    <option v-for="c in store.catDefs" :key="c.id" :value="c.name">{{ c.icon }} {{ c.name }}</option>
+                    <option v-for="c in store.catDefs" :key="c.id" :value="c.name">
+                      {{ c.icon }} {{ c.name }}
+                    </option>
                   </select>
                 </div>
                 <div class="form-group">
@@ -168,12 +190,20 @@
 
               <div class="form-group">
                 <label>Compatibilidad</label>
-                <input v-model="partForm.compat" type="text" placeholder="Ej. John Deere 5000-7000, Universal" />
+                <input
+                  v-model="partForm.compat"
+                  type="text"
+                  placeholder="Ej. John Deere 5000-7000, Universal"
+                />
               </div>
 
               <div class="form-group">
                 <label>Descripción</label>
-                <textarea v-model="partForm.description" placeholder="Descripción detallada de la pieza, características, notas…" rows="3" />
+                <textarea
+                  v-model="partForm.description"
+                  placeholder="Descripción detallada de la pieza, características, notas…"
+                  rows="3"
+                />
               </div>
 
               <div class="form-row">
@@ -194,7 +224,12 @@
               <!-- Photo upload -->
               <div class="form-group">
                 <label>Foto de la pieza</label>
-                <div class="photo-upload" @click="$refs.photoInput.click()" @dragover.prevent @drop.prevent="onDrop">
+                <div
+                  class="photo-upload"
+                  @click="$refs.photoInput.click()"
+                  @dragover.prevent
+                  @drop.prevent="onDrop"
+                >
                   <div v-if="partForm.image" class="photo-preview">
                     <img :src="partForm.image" alt="Vista previa" />
                     <button class="remove-photo" @click.stop="partForm.image = null">✕</button>
@@ -205,14 +240,26 @@
                     <small>JPG, PNG, WEBP · Máx 2MB</small>
                   </div>
                 </div>
-                <input ref="photoInput" type="file" accept="image/*" style="display:none" @change="onPhotoChange" />
+                <input
+                  ref="photoInput"
+                  type="file"
+                  accept="image/*"
+                  style="display: none"
+                  @change="onPhotoChange"
+                />
               </div>
             </div>
 
             <p v-if="partModal.error" class="error-msg">{{ partModal.error }}</p>
 
             <div class="modal-foot">
-              <button class="btn btn-outline" @click="partModal.open = false" :disabled="partModal_saving">Cancelar</button>
+              <button
+                class="btn btn-outline"
+                @click="partModal.open = false"
+                :disabled="partModal_saving"
+              >
+                Cancelar
+              </button>
               <button class="btn btn-secondary" @click="savePart" :disabled="partModal_saving">
                 <span v-if="partModal_saving">⏳ Guardando…</span>
                 <span v-else>{{ partModal.isNew ? '➕ Añadir pieza' : '💾 Guardar cambios' }}</span>
@@ -247,13 +294,25 @@
                   <label>Color</label>
                   <div class="color-row">
                     <input v-model="catForm.color" type="color" class="color-input" />
-                    <input v-model="catForm.color" type="text" placeholder="#3182ce" class="color-text" />
+                    <input
+                      v-model="catForm.color"
+                      type="text"
+                      placeholder="#3182ce"
+                      class="color-text"
+                    />
                   </div>
                 </div>
               </div>
               <!-- Preview -->
               <div class="cat-preview">
-                <span class="cat-badge" :style="{ background: catForm.color + '22', color: catForm.color, borderColor: catForm.color + '55' }">
+                <span
+                  class="cat-badge"
+                  :style="{
+                    background: catForm.color + '22',
+                    color: catForm.color,
+                    borderColor: catForm.color + '55',
+                  }"
+                >
                   {{ catForm.icon || '📦' }} {{ catForm.name || 'Nombre' }}
                 </span>
               </div>
@@ -275,14 +334,20 @@
     <!-- ══════════ CONFIRM DELETE ══════════ -->
     <Teleport to="body">
       <Transition name="modal-fade">
-        <div v-if="deleteConfirm.open" class="modal-overlay" @click.self="deleteConfirm.open = false">
+        <div
+          v-if="deleteConfirm.open"
+          class="modal-overlay"
+          @click.self="deleteConfirm.open = false"
+        >
           <div class="modal-box modal-sm">
             <div class="modal-head">
               <h2>🗑️ Confirmar eliminación</h2>
               <button class="modal-close" @click="deleteConfirm.open = false">✕</button>
             </div>
             <div class="modal-body">
-              <p>¿Seguro que quieres eliminar <strong>"{{ deleteConfirm.name }}"</strong>?</p>
+              <p>
+                ¿Seguro que quieres eliminar <strong>"{{ deleteConfirm.name }}"</strong>?
+              </p>
               <p class="warn-text">Esta acción no se puede deshacer.</p>
             </div>
             <div class="modal-foot">
@@ -293,7 +358,6 @@
         </div>
       </Transition>
     </Teleport>
-
   </div>
 </template>
 
@@ -301,11 +365,11 @@
 import { ref, computed, reactive, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { usePartsStore } from '@/stores/parts'
-import { useAuthStore  } from '@/stores/auth'
+import { useAuthStore } from '@/stores/auth'
 import { supabase, BUCKET } from '@/lib/supabase'
 
-const store  = usePartsStore()
-const auth   = useAuthStore()
+const store = usePartsStore()
+const auth = useAuthStore()
 const router = useRouter()
 
 onMounted(() => {
@@ -315,49 +379,71 @@ onMounted(() => {
 // ── Tabs ──────────────────────────────────────────────────────────────────
 const activeTab = ref('parts')
 const tabs = computed(() => [
-  { id: 'parts', icon: '📦', label: 'Piezas',     badge: store.parts.length },
-  { id: 'cats',  icon: '🗂️', label: 'Categorías', badge: store.catDefs.length },
+  { id: 'parts', icon: '📦', label: 'Piezas', badge: store.parts.length },
+  { id: 'cats', icon: '🗂️', label: 'Categorías', badge: store.catDefs.length },
 ])
 
 // ── Part filters ──────────────────────────────────────────────────────────
-const partSearch    = ref('')
+const partSearch = ref('')
 const partCatFilter = ref('')
 
 const filteredAdminParts = computed(() => {
   let list = store.parts
-  if (partCatFilter.value) list = list.filter(p => p.category === partCatFilter.value)
+  if (partCatFilter.value) list = list.filter((p) => p.category === partCatFilter.value)
   const q = partSearch.value.trim().toLowerCase()
-  if (q) list = list.filter(p =>
-    p.name.toLowerCase().includes(q) ||
-    p.ref.toLowerCase().includes(q) ||
-    p.category.toLowerCase().includes(q)
-  )
+  if (q)
+    list = list.filter(
+      (p) =>
+        p.name.toLowerCase().includes(q) ||
+        p.ref.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q),
+    )
   return list
 })
 
 // ── Part modal ────────────────────────────────────────────────────────────
 const partModal = reactive({ open: false, isNew: true, id: null, error: '' })
-const partForm  = reactive({
-  name: '', ref: '', category: '', emoji: '🔧',
-  compat: '', description: '', stockStatus: 'available', stockLabel: 'Disponible', image: null,
+const partForm = reactive({
+  name: '',
+  ref: '',
+  category: '',
+  emoji: '🔧',
+  compat: '',
+  description: '',
+  stockStatus: 'available',
+  stockLabel: 'Disponible',
+  image: null,
 })
 
 function openPartModal(part) {
   partModal.error = ''
   if (part) {
     partModal.isNew = false
-    partModal.id    = part.id
+    partModal.id = part.id
     Object.assign(partForm, {
-      name: part.name, ref: part.ref, category: part.category, emoji: part.emoji,
-      compat: part.compat, description: part.description || '',
-      stockStatus: part.stockStatus, stockLabel: part.stockLabel, image: part.image || null,
+      name: part.name,
+      ref: part.ref,
+      category: part.category,
+      emoji: part.emoji,
+      compat: part.compat,
+      description: part.description || '',
+      stockStatus: part.stockStatus,
+      stockLabel: part.stockLabel,
+      image: part.image || null,
     })
   } else {
     partModal.isNew = true
-    partModal.id    = null
+    partModal.id = null
     Object.assign(partForm, {
-      name: '', ref: '', category: '', emoji: '🔧',
-      compat: '', description: '', stockStatus: 'available', stockLabel: 'Disponible', image: null,
+      name: '',
+      ref: '',
+      category: '',
+      emoji: '🔧',
+      compat: '',
+      description: '',
+      stockStatus: 'available',
+      stockLabel: 'Disponible',
+      image: null,
     })
   }
   partModal.open = true
@@ -417,12 +503,14 @@ function previewFile(file) {
   pendingFile.value = file
   // Mostrar preview local inmediata
   const reader = new FileReader()
-  reader.onload = e => { partForm.image = e.target.result }
+  reader.onload = (e) => {
+    partForm.image = e.target.result
+  }
   reader.readAsDataURL(file)
 }
 
 async function uploadPhoto(file) {
-  const ext      = file.name.split('.').pop()
+  const ext = file.name.split('.').pop()
   const filename = `part-${Date.now()}.${ext}`
   const { error } = await supabase.storage
     .from(BUCKET)
@@ -434,17 +522,17 @@ async function uploadPhoto(file) {
 
 // ── Category modal ────────────────────────────────────────────────────────
 const catModal = reactive({ open: false, isNew: true, id: null, error: '' })
-const catForm  = reactive({ name: '', icon: '📦', color: '#3182ce' })
+const catForm = reactive({ name: '', icon: '📦', color: '#3182ce' })
 
 function openCatModal(cat) {
   catModal.error = ''
   if (cat) {
     catModal.isNew = false
-    catModal.id    = cat.id
+    catModal.id = cat.id
     Object.assign(catForm, { name: cat.name, icon: cat.icon, color: cat.color })
   } else {
     catModal.isNew = true
-    catModal.id    = null
+    catModal.id = null
     Object.assign(catForm, { name: '', icon: '📦', color: '#3182ce' })
   }
   catModal.open = true
@@ -488,8 +576,8 @@ async function executeDelete() {
 }
 
 // ── Logout ────────────────────────────────────────────────────────────────
-function doLogout() {
-  auth.logout()
+async function doLogout() {
+  await auth.logout()
   router.push('/admin/login')
 }
 </script>
@@ -520,7 +608,7 @@ function doLogout() {
   align-items: center;
   gap: 0.7rem;
   padding: 1.4rem 1.2rem 1rem;
-  border-bottom: 1px solid rgba(255,255,255,0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .sidebar-logo img {
@@ -562,7 +650,7 @@ function doLogout() {
   gap: 0.6rem;
   padding: 0.7rem 0.9rem;
   border-radius: var(--radius-sm);
-  color: rgba(255,255,255,0.75);
+  color: rgba(255, 255, 255, 0.75);
   font-size: 0.9rem;
   font-weight: 500;
   background: transparent;
@@ -572,7 +660,7 @@ function doLogout() {
 }
 
 .nav-btn:hover {
-  background: rgba(255,255,255,0.08);
+  background: rgba(255, 255, 255, 0.08);
   color: var(--white);
 }
 
@@ -582,25 +670,27 @@ function doLogout() {
   font-weight: 700;
 }
 
-.nav-icon { font-size: 1.1rem; }
+.nav-icon {
+  font-size: 1.1rem;
+}
 
 .nav-badge {
   margin-left: auto;
-  background: rgba(255,255,255,0.15);
-  color: rgba(255,255,255,0.8);
+  background: rgba(255, 255, 255, 0.15);
+  color: rgba(255, 255, 255, 0.8);
   border-radius: 10px;
   padding: 1px 7px;
   font-size: 0.75rem;
 }
 
 .nav-btn.active .nav-badge {
-  background: rgba(26,58,26,0.2);
+  background: rgba(26, 58, 26, 0.2);
   color: var(--green-dark);
 }
 
 .sidebar-footer {
   padding: 0.75rem;
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   flex-direction: column;
   gap: 0.2rem;
@@ -610,7 +700,7 @@ function doLogout() {
   display: block;
   padding: 0.55rem 0.9rem;
   border-radius: var(--radius-sm);
-  color: rgba(255,255,255,0.6);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.82rem;
   transition: var(--transition);
   background: transparent;
@@ -618,9 +708,16 @@ function doLogout() {
   text-align: left;
 }
 
-.sidebar-link:hover { color: var(--yellow); background: rgba(255,255,255,0.06); }
-.sidebar-link.logout { color: rgba(255,100,100,0.7); }
-.sidebar-link.logout:hover { color: #fc8181; }
+.sidebar-link:hover {
+  color: var(--yellow);
+  background: rgba(255, 255, 255, 0.06);
+}
+.sidebar-link.logout {
+  color: rgba(255, 100, 100, 0.7);
+}
+.sidebar-link.logout:hover {
+  color: #fc8181;
+}
 
 /* ── Main ───────────────────────────────────────────────────────────── */
 .admin-main {
@@ -667,7 +764,10 @@ function doLogout() {
   color: var(--text-main);
 }
 
-.filter-input { flex: 1; min-width: 200px; }
+.filter-input {
+  flex: 1;
+  min-width: 200px;
+}
 
 /* ── Table ───────────────────────────────────────────────────────────── */
 .table-wrap {
@@ -702,8 +802,12 @@ function doLogout() {
   vertical-align: middle;
 }
 
-.admin-table tr:last-child td { border-bottom: none; }
-.admin-table tr:hover td { background: #fafafa; }
+.admin-table tr:last-child td {
+  border-bottom: none;
+}
+.admin-table tr:hover td {
+  background: #fafafa;
+}
 
 .thumb {
   width: 44px;
@@ -717,10 +821,20 @@ function doLogout() {
   flex-shrink: 0;
 }
 
-.thumb img { width: 100%; height: 100%; object-fit: cover; }
-.thumb-emoji { font-size: 1.4rem; }
+.thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.thumb-emoji {
+  font-size: 1.4rem;
+}
 
-.part-desc-preview { font-size: 0.78rem; color: var(--text-soft); margin-top: 2px; }
+.part-desc-preview {
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  margin-top: 2px;
+}
 
 .cat-badge {
   display: inline-block;
@@ -738,9 +852,15 @@ function doLogout() {
   border-radius: 50%;
   margin-right: 5px;
 }
-.stock-dot.available { background: #38a169; }
-.stock-dot.low       { background: #d69e2e; }
-.stock-dot.out       { background: #e53e3e; }
+.stock-dot.available {
+  background: #38a169;
+}
+.stock-dot.low {
+  background: #d69e2e;
+}
+.stock-dot.out {
+  background: #e53e3e;
+}
 
 .icon-btn {
   width: 32px;
@@ -755,10 +875,18 @@ function doLogout() {
   transition: var(--transition);
   margin-right: 2px;
 }
-.icon-btn.edit:hover { background: #ebf8ff; }
-.icon-btn.del:hover  { background: #fff5f5; }
+.icon-btn.edit:hover {
+  background: #ebf8ff;
+}
+.icon-btn.del:hover {
+  background: #fff5f5;
+}
 
-.empty-row { text-align: center; color: var(--text-soft); padding: 2rem !important; }
+.empty-row {
+  text-align: center;
+  color: var(--text-soft);
+  padding: 2rem !important;
+}
 
 code {
   background: var(--gray-light);
@@ -799,16 +927,26 @@ code {
 .cat-card-info {
   flex: 1;
 }
-.cat-card-info strong { display: block; font-size: 0.95rem; color: var(--text-main); }
-.cat-card-info span   { font-size: 0.8rem; color: var(--text-soft); }
+.cat-card-info strong {
+  display: block;
+  font-size: 0.95rem;
+  color: var(--text-main);
+}
+.cat-card-info span {
+  font-size: 0.8rem;
+  color: var(--text-soft);
+}
 
-.cat-card-actions { display: flex; gap: 4px; }
+.cat-card-actions {
+  display: flex;
+  gap: 4px;
+}
 
 /* ── Modals ──────────────────────────────────────────────────────────── */
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.55);
+  background: rgba(0, 0, 0, 0.55);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -824,10 +962,12 @@ code {
   max-width: 620px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
 }
 
-.modal-sm { max-width: 420px; }
+.modal-sm {
+  max-width: 420px;
+}
 
 .modal-head {
   display: flex;
@@ -837,7 +977,10 @@ code {
   border-bottom: 1px solid var(--gray-mid);
 }
 
-.modal-head h2 { font-size: 1.15rem; color: var(--green-dark); }
+.modal-head h2 {
+  font-size: 1.15rem;
+  color: var(--green-dark);
+}
 
 .modal-close {
   width: 30px;
@@ -852,9 +995,14 @@ code {
   justify-content: center;
   transition: var(--transition);
 }
-.modal-close:hover { background: #fee2e2; color: #dc2626; }
+.modal-close:hover {
+  background: #fee2e2;
+  color: #dc2626;
+}
 
-.modal-body { padding: 1.2rem 1.5rem; }
+.modal-body {
+  padding: 1.2rem 1.5rem;
+}
 
 .modal-foot {
   padding: 1rem 1.5rem;
@@ -874,7 +1022,9 @@ code {
   border-radius: var(--radius-sm);
 }
 
-.req { color: #e53e3e; }
+.req {
+  color: #e53e3e;
+}
 
 /* Photo upload */
 .photo-upload {
@@ -889,22 +1039,39 @@ code {
   justify-content: center;
 }
 
-.photo-upload:hover { border-color: var(--green-light); background: var(--green-pale); }
+.photo-upload:hover {
+  border-color: var(--green-light);
+  background: var(--green-pale);
+}
 
 .photo-placeholder {
   text-align: center;
   padding: 1.5rem;
   color: var(--text-soft);
 }
-.photo-placeholder span { font-size: 2rem; display: block; margin-bottom: 0.4rem; }
-.photo-placeholder p    { font-size: 0.88rem; margin-bottom: 0.2rem; }
-.photo-placeholder small { font-size: 0.78rem; }
+.photo-placeholder span {
+  font-size: 2rem;
+  display: block;
+  margin-bottom: 0.4rem;
+}
+.photo-placeholder p {
+  font-size: 0.88rem;
+  margin-bottom: 0.2rem;
+}
+.photo-placeholder small {
+  font-size: 0.78rem;
+}
 
 .photo-preview {
   position: relative;
   width: 100%;
 }
-.photo-preview img { width: 100%; max-height: 200px; object-fit: contain; display: block; }
+.photo-preview img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  display: block;
+}
 
 .remove-photo {
   position: absolute;
@@ -912,7 +1079,7 @@ code {
   right: 6px;
   width: 26px;
   height: 26px;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   color: white;
   border-radius: 50%;
   font-size: 0.75rem;
@@ -923,12 +1090,31 @@ code {
 }
 
 /* Color picker */
-.color-row { display: flex; gap: 0.5rem; align-items: center; }
-.color-input { width: 42px; height: 38px; border-radius: 6px; border: 1px solid var(--gray-mid); cursor: pointer; padding: 2px; }
-.color-text { flex: 1; }
+.color-row {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+.color-input {
+  width: 42px;
+  height: 38px;
+  border-radius: 6px;
+  border: 1px solid var(--gray-mid);
+  cursor: pointer;
+  padding: 2px;
+}
+.color-text {
+  flex: 1;
+}
 
 /* Category preview */
-.cat-preview { margin-top: 1rem; padding: 0.8rem; background: var(--gray-light); border-radius: var(--radius-sm); text-align: center; }
+.cat-preview {
+  margin-top: 1rem;
+  padding: 0.8rem;
+  background: var(--gray-light);
+  border-radius: var(--radius-sm);
+  text-align: center;
+}
 
 /* Danger btn */
 .btn-danger {
@@ -941,22 +1127,48 @@ code {
   transition: var(--transition);
   cursor: pointer;
 }
-.btn-danger:hover { background: #c53030; }
+.btn-danger:hover {
+  background: #c53030;
+}
 
-.warn-text { font-size: 0.85rem; color: #e53e3e; margin-top: 0.4rem; }
+.warn-text {
+  font-size: 0.85rem;
+  color: #e53e3e;
+  margin-top: 0.4rem;
+}
 
 /* Modal transition */
 .modal-fade-enter-active,
-.modal-fade-leave-active { transition: opacity 0.2s ease; }
+.modal-fade-leave-active {
+  transition: opacity 0.2s ease;
+}
 .modal-fade-enter-from,
-.modal-fade-leave-to    { opacity: 0; }
+.modal-fade-leave-to {
+  opacity: 0;
+}
 
 /* Responsive */
 @media (max-width: 768px) {
-  .admin-wrap { flex-direction: column; }
-  .sidebar { width: 100%; height: auto; position: static; flex-direction: row; flex-wrap: wrap; }
-  .sidebar-nav { flex-direction: row; flex-wrap: wrap; padding: 0.5rem; }
-  .sidebar-footer { flex-direction: row; }
-  .admin-main { padding: 1rem; }
+  .admin-wrap {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 0.5rem;
+  }
+  .sidebar-footer {
+    flex-direction: row;
+  }
+  .admin-main {
+    padding: 1rem;
+  }
 }
 </style>

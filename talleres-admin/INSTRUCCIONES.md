@@ -58,10 +58,20 @@ El .apk estará en: `src-tauri/gen/android/app/build/outputs/apk/`
 
 ---
 
-## Credenciales
+## Acceso administrativo
 
-- Contraseña del panel: **taller2024**
-- Cámbiala en: `src/stores/auth.js`
+- El panel usa Supabase Auth con correo y contraseña.
+- El registro público debe permanecer desactivado.
+- Solo las cuentas añadidas explícitamente a `public.admin_users` tienen permisos de escritura.
+- No guardes contraseñas ni claves `service_role` dentro del proyecto.
+
+Para autorizar al único administrador, crea primero la cuenta desde Supabase Dashboard y después ejecuta en SQL Editor, sustituyendo el correo:
+
+```sql
+insert into public.admin_users (user_id)
+select id from auth.users where email = 'correo-del-cliente@example.com'
+on conflict (user_id) do nothing;
+```
 
 ---
 

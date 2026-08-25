@@ -2,7 +2,6 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
-
         <!-- Brand -->
         <div class="footer-brand">
           <div class="brand-logo">
@@ -16,11 +15,21 @@
           </div>
           <p>
             Venta y reparación de maquinaria agrícola, ganadera, forestal, de jardín y ordeño.
-            Distribuidores oficiales de la marca <strong style="color:var(--yellow)">Rapid</strong> para toda Cantabria.
+            Distribuidores oficiales de la marca
+            <strong style="color: var(--yellow)">Rapid</strong> para toda Cantabria.
           </p>
           <div class="social-links">
-            <a href="https://www.facebook.com/p/Talleres-Enrique-100069403444345/" target="_blank" class="social-btn" aria-label="Facebook">f</a>
-            <a href="https://wa.me/34942590301" target="_blank" class="social-btn" aria-label="WhatsApp">💬</a>
+            <a
+              :href="s.facebook_url"
+              target="_blank"
+              rel="noopener"
+              class="social-btn"
+              aria-label="Facebook"
+              ><AppIcon name="facebook" :size="16"
+            /></a>
+            <a :href="waUrl" target="_blank" rel="noopener" class="social-btn" aria-label="WhatsApp"
+              ><AppIcon name="message-circle" :size="16"
+            /></a>
           </div>
         </div>
 
@@ -32,6 +41,9 @@
             <li><RouterLink to="/servicios">Servicios</RouterLink></li>
             <li><RouterLink to="/catalogo">Catálogo de piezas</RouterLink></li>
             <li><RouterLink to="/contacto">Contacto</RouterLink></li>
+            <li><RouterLink to="/aviso-legal">Aviso legal</RouterLink></li>
+            <li><RouterLink to="/privacidad">Privacidad</RouterLink></li>
+            <li><RouterLink to="/cookies">Cookies</RouterLink></li>
           </ul>
         </div>
 
@@ -52,12 +64,20 @@
         <div class="footer-col">
           <h4>Contacto</h4>
           <ul class="contact-list">
-            <li>📍 C/ Pola Nº 2, Selaya, Cantabria</li>
-            <li>📞 <a href="tel:+34942590301">942 59 03 01</a></li>
-            <li>📧 <a href="mailto:mayteruca@hotmail.com">mayteruca@hotmail.com</a></li>
-            <li>🕐 Lun–Vie: 8:00–20:00</li>
-            <li>🕐 Sáb: 9:00–14:00</li>
-            <li>🔴 Dom: Cerrado</li>
+            <li><AppIcon name="map-pin" :size="15" /> {{ s.address }}</li>
+            <li>
+              <AppIcon name="message-circle" :size="15" />
+              <a :href="waUrl" target="_blank" rel="noopener">WhatsApp: {{ s.phone }}</a>
+            </li>
+            <li>
+              <AppIcon name="phone" :size="15" /> <a :href="'tel:' + s.phone_link">{{ s.phone }}</a>
+            </li>
+            <li>
+              <AppIcon name="mail" :size="15" /> <a :href="'mailto:' + s.email">{{ s.email }}</a>
+            </li>
+            <li><AppIcon name="clock" :size="15" /> Lun–Vie: {{ s.hours_weekday }}</li>
+            <li><AppIcon name="clock" :size="15" /> Sáb: {{ s.hours_saturday }}</li>
+            <li><AppIcon name="clock" :size="15" /> Dom: {{ s.hours_sunday }}</li>
           </ul>
         </div>
       </div>
@@ -70,15 +90,26 @@
 </template>
 
 <script setup>
+import { computed } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
+import AppIcon from '@/components/AppIcon.vue'
+
+const settings = useSettingsStore()
+const s = computed(() => settings.settings)
+const waUrl = computed(() =>
+  settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
+)
+
 const year = new Date().getFullYear()
 </script>
 
 <style scoped>
 .footer {
-  background: var(--green-dark);
-  color: rgba(255,255,255,0.75);
+  background: var(--header-bg);
+  color: var(--header-text-soft);
   padding: 3.5rem 0 1.5rem;
   border-top: 4px solid var(--yellow);
+  transition: background-color 0.3s ease;
 }
 
 .footer-grid {
@@ -97,10 +128,9 @@ const year = new Date().getFullYear()
 }
 
 .logo-icon {
-  width: 42px;
-  height: 42px;
-  background: var(--yellow);
-  border-radius: 8px;
+  width: 60px;
+  height: 60px;
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -121,7 +151,7 @@ const year = new Date().getFullYear()
   font-family: 'Oswald', sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--white);
+  color: var(--header-text);
   line-height: 1.2;
 }
 
@@ -135,7 +165,7 @@ const year = new Date().getFullYear()
 .footer-brand p {
   font-size: 0.87rem;
   line-height: 1.7;
-  color: rgba(255,255,255,0.6);
+  color: var(--header-text-softer);
   margin-bottom: 1.2rem;
 }
 
@@ -148,13 +178,13 @@ const year = new Date().getFullYear()
   width: 38px;
   height: 38px;
   border-radius: var(--radius-sm);
-  background: rgba(255,255,255,0.08);
+  background: var(--header-border);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 0.9rem;
   font-weight: 700;
-  color: rgba(255,255,255,0.65);
+  color: var(--header-text-soft);
   transition: var(--transition);
 }
 
@@ -182,7 +212,7 @@ const year = new Date().getFullYear()
 
 .footer-col ul li a {
   font-size: 0.87rem;
-  color: rgba(255,255,255,0.6);
+  color: var(--header-text-softer);
   transition: var(--transition);
   display: inline-block;
 }
@@ -194,35 +224,44 @@ const year = new Date().getFullYear()
 
 .contact-list li {
   font-size: 0.87rem;
-  color: rgba(255,255,255,0.6);
+  color: var(--header-text-softer);
   display: flex;
   align-items: flex-start;
   gap: 0.4rem;
 }
 
 .contact-list li a {
-  color: rgba(255,255,255,0.75);
+  color: var(--header-text-soft);
   transition: var(--transition);
 }
 
-.contact-list li a:hover { color: var(--yellow); }
+.contact-list li a:hover {
+  color: var(--yellow);
+}
 
 /* Bottom */
 .footer-bottom {
-  border-top: 1px solid rgba(255,255,255,0.1);
+  border-top: 1px solid var(--header-border);
   padding-top: 1.5rem;
   text-align: center;
   font-size: 0.82rem;
-  color: rgba(255,255,255,0.35);
+  color: var(--header-text-softer);
+  opacity: 0.6;
 }
 
 /* Responsive */
 @media (max-width: 960px) {
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-  .footer-brand { grid-column: 1 / -1; }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 560px) {
-  .footer-grid { grid-template-columns: 1fr; }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

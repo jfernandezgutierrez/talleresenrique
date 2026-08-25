@@ -1,34 +1,49 @@
 <template>
-  <article class="part-card" @click="$emit('ask', part)">
+  <article class="part-card">
     <div class="part-img">
-      <img v-if="getPrimaryImage(part)" :src="getPrimaryImage(part)" :alt="part.name" class="part-photo" />
+      <img
+        v-if="getPrimaryImage(part)"
+        :src="getPrimaryImage(part)"
+        :alt="part.name"
+        class="part-photo"
+        loading="lazy"
+        decoding="async"
+      />
       <span v-else class="part-emoji">{{ part.emoji }}</span>
       <!-- Badge si tiene más imágenes -->
-      <div v-if="part.media && part.media.filter(m => m.type === 'image').length > 1" class="media-count-badge">
-        📷 {{ part.media.filter(m => m.type === 'image').length }}
+      <div
+        v-if="part.media && part.media.filter((m) => m.type === 'image').length > 1"
+        class="media-count-badge"
+      >
+        📷 {{ part.media.filter((m) => m.type === 'image').length }}
       </div>
       <!-- Badge si tiene vídeo -->
-      <div v-if="part.media && part.media.some(m => m.type === 'video')" class="video-count-badge">
+      <div
+        v-if="part.media && part.media.some((m) => m.type === 'video')"
+        class="video-count-badge"
+      >
         🎬
       </div>
     </div>
     <div class="part-body">
-      <span
-        class="cat-badge"
-        :style="{ background: part.catColor + '22', color: part.catColor }"
-      >
+      <span class="cat-badge" :style="{ background: part.catColor + '22', color: part.catColor }">
         {{ part.category }}
       </span>
       <h3 class="part-name">{{ part.name }}</h3>
       <p class="part-ref">REF: {{ part.ref }}</p>
-      <p class="part-compat">🚜 {{ part.compat }}</p>
+      <p class="part-compat"><AppIcon name="tractor" :size="13" /> {{ part.compat }}</p>
       <p v-if="part.description" class="part-desc">{{ part.description }}</p>
       <div class="part-stock" :class="`stock-${part.stockStatus}`">
         <span class="dot" />
         {{ part.stockLabel }}
       </div>
-      <button class="ask-btn" @click.stop="$emit('ask', part)">
-        💬 Consultar disponibilidad
+      <button
+        class="ask-btn"
+        type="button"
+        :aria-label="`Consultar disponibilidad de ${part.name}`"
+        @click="$emit('ask', part)"
+      >
+        <AppIcon name="message-circle" :size="14" /> Consultar disponibilidad
       </button>
     </div>
   </article>
@@ -36,18 +51,21 @@
 
 <script setup>
 import { getPrimaryImage } from '@/stores/parts'
+import AppIcon from '@/components/AppIcon.vue'
 defineProps({ part: { type: Object, required: true } })
 defineEmits(['ask'])
 </script>
 
 <style scoped>
 .part-card {
-  background: var(--white);
+  background: var(--surface);
   border: 1px solid var(--gray-mid);
   border-radius: var(--radius);
   overflow: hidden;
   cursor: pointer;
-  transition: var(--transition);
+  transition:
+    var(--transition),
+    background-color 0.3s ease;
   display: flex;
   flex-direction: column;
 }
@@ -73,7 +91,7 @@ defineEmits(['ask'])
 .video-count-badge {
   position: absolute;
   bottom: 6px;
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
   color: #fff;
   font-size: 0.7rem;
   font-weight: 700;
@@ -82,8 +100,12 @@ defineEmits(['ask'])
   pointer-events: none;
   line-height: 1.4;
 }
-.media-count-badge { right: 6px; }
-.video-count-badge { left: 6px; }
+.media-count-badge {
+  right: 6px;
+}
+.video-count-badge {
+  left: 6px;
+}
 
 .part-photo {
   width: 100%;
@@ -165,27 +187,43 @@ defineEmits(['ask'])
   flex-shrink: 0;
 }
 
-.stock-available { color: #16a34a; }
-.stock-available .dot { background: #22c55e; }
+.stock-available {
+  color: #16a34a;
+}
+.stock-available .dot {
+  background: #22c55e;
+}
 
-.stock-low { color: #d97706; }
-.stock-low .dot { background: #f59e0b; }
+.stock-low {
+  color: #d97706;
+}
+.stock-low .dot {
+  background: #f59e0b;
+}
 
-.stock-out { color: #dc2626; }
-.stock-out .dot { background: #ef4444; }
+.stock-out {
+  color: #dc2626;
+}
+.stock-out .dot {
+  background: #ef4444;
+}
 
 .ask-btn {
   width: 100%;
   padding: 0.6rem;
   background: var(--green-pale);
-  color: var(--green-dark);
+  color: var(--heading);
   border-radius: var(--radius-sm);
   font-size: 0.83rem;
   font-weight: 700;
   font-family: 'Oswald', sans-serif;
   letter-spacing: 0.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   transition: var(--transition);
-  border: 1px solid rgba(74,158,74,0.3);
+  border: 1px solid rgba(74, 158, 74, 0.3);
 }
 
 .ask-btn:hover {

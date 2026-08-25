@@ -1,33 +1,105 @@
 /* ============================================================
-   VARIABLES GLOBALES
+   VARIABLES GLOBALES — TEMA "Campo" (por defecto)
+   Tres temas disponibles, ver theme.js / selector en la barra:
+     (sin data-theme) = Campo   → verde original
+     [data-theme="claro"]       → tonos blancos
+     [data-theme="oscuro"]      → mecánico / industrial
 ============================================================ */
 :root {
-  --green-dark:    #1a3a1a;
-  --green-mid:     #2d6a2d;
-  --green-light:   #4a9e4a;
-  --green-pale:    #e8f5e8;
-  --yellow:        #f5c518;
-  --yellow-dark:   #d4a017;
-  --earth:         #8b6914;
-  --earth-light:   #c8a84b;
-  --white:         #ffffff;
-  --gray-light:    #f4f4f2;
-  --gray-mid:      #d0d0c8;
-  --gray-dark:     #555550;
-  --text-main:     #1e1e1a;
-  --text-soft:     #5a5a54;
-  --shadow:        0 4px 20px rgba(0,0,0,0.12);
-  --shadow-strong: 0 8px 32px rgba(0,0,0,0.22);
-  --radius:        10px;
-  --radius-sm:     6px;
-  --transition:    0.25s ease;
-  --nav-height:    70px;
+  /* Marca */
+  --green-dark: #1a3a1a;
+  --green-mid: #2d6a2d;
+  --green-light: #4a9e4a;
+  --green-pale: #e8f5e8;
+  --yellow: #f5c518;
+  --yellow-dark: #d4a017;
+  --earth: #8b6914;
+  --earth-light: #c8a84b;
+
+  /* Superficies y texto del contenido (cards, secciones claras) */
+  --white: #ffffff; /* blanco literal: texto sobre botones/fondos de color, no se tematiza */
+  --surface: #ffffff; /* fondo de página / tarjetas */
+  --gray-light: #f4f4f2; /* fondo de secciones alternas */
+  --gray-mid: #d0d0c8; /* bordes */
+  --gray-dark: #555550; /* iconos / texto gris */
+  --text-main: #1e1e1a;
+  --text-soft: #5a5a54;
+  --heading: var(--green-dark); /* color de títulos sobre superficie clara */
+
+  /* "Marco" oscuro: cabecera, hero, footer, cabeceras de página, franja de marcas */
+  --header-bg: #1a3a1a;
+  --nav-bg: rgba(26, 58, 26, 0.97);
+  --header-bg-2: #2d6a2d;
+  --header-text: #ffffff;
+  --header-text-soft: rgba(255, 255, 255, 0.75);
+  --header-text-softer: rgba(255, 255, 255, 0.55);
+  --header-border: rgba(255, 255, 255, 0.08);
+  --header-border-strong: rgba(255, 255, 255, 0.6);
+  --hero-overlay-1: rgba(26, 58, 26, 0.9);
+  --hero-overlay-2: rgba(45, 106, 45, 0.65);
+  --hero-overlay-3: rgba(26, 58, 26, 0.85);
+
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+  --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.22);
+  --radius: 10px;
+  --radius-sm: 6px;
+  --transition: 0.25s ease;
+  --nav-height: 70px;
+}
+
+/* ── TEMA "Claro" — tonos blancos, cabecera y hero en blanco ── */
+[data-theme='claro'] {
+  --header-bg: #ffffff;
+  --nav-bg: rgba(255, 255, 255, 0.96);
+  --header-bg-2: #f2f2ee;
+  --header-text: #1e1e1a;
+  --header-text-soft: rgba(30, 30, 26, 0.65);
+  --header-text-softer: rgba(30, 30, 26, 0.45);
+  --header-border: rgba(0, 0, 0, 0.08);
+  --header-border-strong: rgba(30, 30, 26, 0.35);
+  --hero-overlay-1: rgba(255, 255, 255, 0.85);
+  --hero-overlay-2: rgba(255, 255, 255, 0.5);
+  --hero-overlay-3: rgba(255, 255, 255, 0.82);
+}
+
+/* ── TEMA "Oscuro" — estilo mecánico / industrial ── */
+[data-theme='oscuro'] {
+  --green-mid: #3f8f46;
+  --green-light: #6cc36f;
+  --green-pale: #16241a;
+  --yellow: #ffb020;
+  --yellow-dark: #d68f0a;
+
+  --surface: #1c1e1f;
+  --gray-light: #17181a;
+  --gray-mid: #34373a;
+  --gray-dark: #9a9d9f;
+  --text-main: #eef0ef;
+  --text-soft: #a3a7a9;
+  --heading: #7ddc7d;
+
+  --header-bg: #101112;
+  --nav-bg: rgba(16, 17, 18, 0.94);
+  --header-bg-2: #1a1c1d;
+  --header-text: #f2f2f0;
+  --header-text-soft: rgba(242, 242, 240, 0.7);
+  --header-text-softer: rgba(242, 242, 240, 0.48);
+  --header-border: rgba(255, 255, 255, 0.08);
+  --header-border-strong: rgba(242, 242, 240, 0.35);
+  --hero-overlay-1: rgba(10, 10, 11, 0.88);
+  --hero-overlay-2: rgba(35, 35, 36, 0.55);
+  --hero-overlay-3: rgba(10, 10, 11, 0.85);
+
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-strong: 0 8px 32px rgba(0, 0, 0, 0.55);
 }
 
 /* ============================================================
    RESET
 ============================================================ */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -41,27 +113,77 @@ html {
 body {
   font-family: 'Open Sans', sans-serif;
   color: var(--text-main);
-  background: var(--white);
+  background: var(--surface);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease;
 }
 
-h1, h2, h3, h4, h5 {
+.skip-link {
+  position: fixed;
+  top: 0.5rem;
+  left: 0.5rem;
+  z-index: 3000;
+  padding: 0.75rem 1rem;
+  background: var(--yellow);
+  color: var(--green-dark);
+  font-weight: 700;
+  border-radius: var(--radius-sm);
+  transform: translateY(-150%);
+}
+
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+:focus-visible {
+  outline: 3px solid var(--yellow);
+  outline-offset: 3px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
   font-family: 'Oswald', sans-serif;
   line-height: 1.2;
 }
 
-img { max-width: 100%; display: block; }
-a   { text-decoration: none; color: inherit; }
-button { cursor: pointer; border: none; font-family: inherit; }
-input, textarea, select { font-family: inherit; }
+img {
+  max-width: 100%;
+  display: block;
+}
+a {
+  text-decoration: none;
+  color: inherit;
+}
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+}
+input,
+textarea,
+select {
+  font-family: inherit;
+}
 
 /* ============================================================
    SCROLLBAR
 ============================================================ */
-::-webkit-scrollbar { width: 8px; }
-::-webkit-scrollbar-track { background: var(--gray-light); }
-::-webkit-scrollbar-thumb { background: var(--green-mid); border-radius: 4px; }
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--gray-light);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--green-mid);
+  border-radius: 4px;
+}
 
 /* ============================================================
    LAYOUT UTILITIES
@@ -90,7 +212,7 @@ input, textarea, select { font-family: inherit; }
   gap: 0.4rem;
   background: var(--green-pale);
   color: var(--green-mid);
-  border: 1px solid rgba(74,158,74,0.3);
+  border: 1px solid rgba(74, 158, 74, 0.3);
   padding: 0.3rem 0.9rem;
   border-radius: 20px;
   font-size: 0.78rem;
@@ -102,11 +224,13 @@ input, textarea, select { font-family: inherit; }
 
 .section-title {
   font-size: clamp(1.8rem, 4vw, 2.8rem);
-  color: var(--green-dark);
+  color: var(--heading);
   margin-bottom: 0.8rem;
 }
 
-.section-title span { color: var(--green-light); }
+.section-title span {
+  color: var(--green-light);
+}
 
 .section-desc {
   font-size: 1rem;
@@ -149,7 +273,7 @@ input, textarea, select { font-family: inherit; }
 .btn-primary:hover {
   background: var(--yellow-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(245,197,24,0.4);
+  box-shadow: 0 6px 20px rgba(245, 197, 24, 0.4);
 }
 
 .btn-secondary {
@@ -159,13 +283,13 @@ input, textarea, select { font-family: inherit; }
 .btn-secondary:hover {
   background: var(--green-dark);
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(45,106,45,0.35);
+  box-shadow: 0 6px 20px rgba(45, 106, 45, 0.35);
 }
 
 .btn-outline {
   background: transparent;
-  color: var(--white);
-  border: 2px solid rgba(255,255,255,0.6);
+  color: var(--header-text);
+  border: 2px solid var(--header-border-strong);
 }
 .btn-outline:hover {
   border-color: var(--yellow);
@@ -184,6 +308,16 @@ input, textarea, select { font-family: inherit; }
   transform: translateY(-2px);
 }
 
+.btn-whatsapp {
+  background: #25d366;
+  color: #fff;
+}
+.btn-whatsapp:hover {
+  background: #1ebe5a;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.4);
+}
+
 /* ============================================================
    FORMULARIO COMPARTIDO
 ============================================================ */
@@ -199,7 +333,10 @@ input, textarea, select { font-family: inherit; }
   margin-bottom: 0.35rem;
 }
 
-.form-group label .req { color: #ef4444; margin-left: 2px; }
+.form-group label .req {
+  color: #ef4444;
+  margin-left: 2px;
+}
 
 .form-group input,
 .form-group textarea,
@@ -210,7 +347,7 @@ input, textarea, select { font-family: inherit; }
   border-radius: var(--radius-sm);
   font-size: 0.9rem;
   color: var(--text-main);
-  background: var(--white);
+  background: var(--surface);
   transition: var(--transition);
   outline: none;
 }
@@ -219,7 +356,7 @@ input, textarea, select { font-family: inherit; }
 .form-group textarea:focus,
 .form-group select:focus {
   border-color: var(--green-light);
-  box-shadow: 0 0 0 3px rgba(74,158,74,0.12);
+  box-shadow: 0 0 0 3px rgba(74, 158, 74, 0.12);
 }
 
 .form-group textarea {
@@ -237,14 +374,38 @@ input, textarea, select { font-family: inherit; }
    FADE TRANSITIONS
 ============================================================ */
 .fade-enter-active,
-.fade-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.fade-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
 .fade-enter-from,
-.fade-leave-to { opacity: 0; transform: translateY(8px); }
+.fade-leave-to {
+  opacity: 0;
+  transform: translateY(8px);
+}
 
 /* ============================================================
    RESPONSIVE HELPERS
 ============================================================ */
 @media (max-width: 640px) {
-  .section-pad   { padding: 3.5rem 0; }
-  .form-row      { grid-template-columns: 1fr; }
+  .section-pad {
+    padding: 3.5rem 0;
+  }
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }
