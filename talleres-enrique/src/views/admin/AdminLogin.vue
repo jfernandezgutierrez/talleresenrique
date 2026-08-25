@@ -9,12 +9,24 @@
 
       <form @submit.prevent="doLogin" class="login-form">
         <div class="form-group">
-          <label>Contraseña</label>
+          <label for="admin-email">Correo</label>
           <input
+            id="admin-email"
+            v-model.trim="email"
+            type="email"
+            autocomplete="username"
+            required
+            autofocus
+          />
+        </div>
+        <div class="form-group">
+          <label for="admin-password">Contraseña</label>
+          <input
+            id="admin-password"
             v-model="password"
             type="password"
-            placeholder="Introduce la contraseña"
-            autofocus
+            autocomplete="current-password"
+            required
           />
         </div>
         <p v-if="error" class="error-msg">{{ error }}</p>
@@ -35,15 +47,17 @@ import { useAuthStore } from '@/stores/auth'
 
 const auth     = useAuthStore()
 const router   = useRouter()
+const email    = ref('')
 const password = ref('')
 const error    = ref('')
 
-function doLogin() {
+async function doLogin() {
   error.value = ''
-  if (auth.login(password.value)) {
+  const result = await auth.login(email.value, password.value)
+  if (result.ok) {
     router.push('/admin')
   } else {
-    error.value = 'Contraseña incorrecta. Inténtalo de nuevo.'
+    error.value = result.message
     password.value = ''
   }
 }

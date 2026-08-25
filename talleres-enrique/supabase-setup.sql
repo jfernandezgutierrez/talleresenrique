@@ -1,4 +1,6 @@
 -- ══════════════════════════════════════════════════════════════
+-- AVISO: script histórico de arranque. Después debe aplicarse la migración
+-- supabase/migrations/20260825125619_secure_single_admin_and_site_settings.sql.
 -- TALLERES ENRIQUE — Supabase Setup
 -- Ejecuta este SQL en: Supabase → SQL Editor → New query
 -- ══════════════════════════════════════════════════════════════
@@ -37,7 +39,8 @@ begin
   new.updated_at = now();
   return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql
+set search_path = pg_catalog, public;
 
 create trigger parts_updated_at
   before update on parts
@@ -51,10 +54,8 @@ alter table parts       enable row level security;
 create policy "Lectura pública categorías" on categories for select using (true);
 create policy "Lectura pública piezas"     on parts       for select using (true);
 
--- Solo anon key puede escribir (el panel admin usa la anon key con rol de servicio en este caso)
--- Para simplificar permitimos escritura con anon key (la contraseña del admin protege el panel)
-create policy "Escritura anon categorías" on categories for all using (true) with check (true);
-create policy "Escritura anon piezas"     on parts       for all using (true) with check (true);
+-- La escritura se configura únicamente para el administrador autorizado
+-- mediante la migración de seguridad. Nunca se permite escritura anónima.
 
 -- 5. STORAGE BUCKET para fotos
 insert into storage.buckets (id, name, public)
@@ -66,15 +67,8 @@ create policy "Imágenes públicas"
   on storage.objects for select
   using (bucket_id = 'parts-images');
 
--- Política de storage: subida desde anon
-create policy "Subida anon"
-  on storage.objects for insert
-  with check (bucket_id = 'parts-images');
-
--- Política de storage: borrado desde anon
-create policy "Borrado anon"
-  on storage.objects for delete
-  using (bucket_id = 'parts-images');
+-- La subida, actualización y eliminación se restringen al administrador
+-- mediante la migración de seguridad.
 
 -- 6. DATOS INICIALES — Categorías
 insert into categories (id, name, icon, color, sort_order) values

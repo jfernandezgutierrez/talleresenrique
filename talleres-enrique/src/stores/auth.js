@@ -1,27 +1,36 @@
-import { ref, computed } from 'vue'
+import { computed, ref } from 'vue'
 import { defineStore } from 'pinia'
-
-// Simple admin password stored locally
-// En producción esto debería ser un backend real
-const ADMIN_PASSWORD = 'taller2024'
+import { supabase } from '@/lib/supabase'
 
 export const useAuthStore = defineStore('auth', () => {
-  const authenticated = ref(sessionStorage.getItem('te_admin') === '1')
-  const isAdmin = computed(() => authenticated.value)
+  const user = ref(null)
+  const admin = ref(false)
+  const isAdmin = computed(() => admin.value)
 
-  function login(password) {
-    if (password === ADMIN_PASSWORD) {
-      authenticated.value = true
-      sessionStorage.setItem('te_admin', '1')
-      return true
+  async function login(email, password) {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
+    if (error || !data.user) return { ok: false, message: 'Correo o contraseña incorrectos.' }
+
+    const { data: allowed, error: permissionError } = await supabase
+      .from('admin_users')
+      .select('user_id')
+      .eq('user_id', data.user.id)
+      .maybeSingle()
+    if (permissionError || !allowed) {
+      await supabase.auth.signOut()
+      return { ok: false, message: 'Esta cuenta no tiene permiso de administración.' }
     }
-    return false
+
+    user.value = data.user
+    admin.value = true
+    return { ok: true }
   }
 
-  function logout() {
-    authenticated.value = false
-    sessionStorage.removeItem('te_admin')
+  async function logout() {
+    await supabase.auth.signOut()
+    user.value = null
+    admin.value = false
   }
 
-  return { isAdmin, login, logout }
+  return { user, isAdmin, login, logout }
 })

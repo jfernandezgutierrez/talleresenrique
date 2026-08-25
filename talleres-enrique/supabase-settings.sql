@@ -1,4 +1,6 @@
 -- ══════════════════════════════════════════════════════════════
+-- AVISO: la política de escritura segura se define en
+-- supabase/migrations/20260825125619_secure_single_admin_and_site_settings.sql.
 -- TALLERES ENRIQUE — Configuración del sitio (site_settings)
 -- Ejecuta este SQL en: Supabase → SQL Editor → New query
 -- Basado en las respuestas del cuestionario "Definición de la nueva web"
@@ -49,18 +51,18 @@ begin
   new.updated_at = now();
   return new;
 end;
-$$ language plpgsql;
+$$ language plpgsql
+set search_path = pg_catalog, public;
 
 drop trigger if exists site_settings_updated_at on site_settings;
 create trigger site_settings_updated_at
   before update on site_settings
   for each row execute function update_settings_updated_at();
 
--- 3. RLS: lectura pública, escritura anon (igual que el resto de tablas del proyecto)
+-- 3. RLS: lectura pública; la escritura nunca es anónima.
 alter table site_settings enable row level security;
 
 create policy "Lectura pública settings" on site_settings for select using (true);
-create policy "Escritura anon settings" on site_settings for all using (true) with check (true);
 
 -- 4. Fila inicial (usa los valores por defecto de arriba)
 insert into site_settings (id) values (1)

@@ -844,7 +844,7 @@ async function executeDelete() {
 }
 
 // ── Logout ────────────────────────────────────────────────────────────────
-function doLogout() { auth.logout(); router.push('/login') }
+async function doLogout() { await auth.logout(); router.push('/login') }
 </script>
 
 <style scoped>

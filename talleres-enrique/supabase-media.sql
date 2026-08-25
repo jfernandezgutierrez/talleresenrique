@@ -1,4 +1,6 @@
 -- ══════════════════════════════════════════════════════════════
+-- AVISO: la escritura segura se define en
+-- supabase/migrations/20260825125619_secure_single_admin_and_site_settings.sql.
 -- TALLERES ENRIQUE — Añadir soporte de media múltiple
 -- Ejecuta este SQL en: Supabase → SQL Editor → New query
 -- ══════════════════════════════════════════════════════════════
@@ -20,7 +22,6 @@ create index if not exists idx_part_media_part_id on part_media(part_id);
 -- RLS
 alter table part_media enable row level security;
 create policy "Lectura pública media"  on part_media for select using (true);
-create policy "Escritura anon media"   on part_media for all using (true) with check (true);
 
 -- 2. Función helper: obtener media de una pieza ordenada
 -- (La usaremos en las queries de la app)
@@ -32,12 +33,4 @@ on conflict (id) do nothing;
 
 create policy "Vídeos públicos"
   on storage.objects for select
-  using (bucket_id = 'parts-videos');
-
-create policy "Subida vídeos anon"
-  on storage.objects for insert
-  with check (bucket_id = 'parts-videos');
-
-create policy "Borrado vídeos anon"
-  on storage.objects for delete
   using (bucket_id = 'parts-videos');
