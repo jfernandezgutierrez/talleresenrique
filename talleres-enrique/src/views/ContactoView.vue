@@ -46,8 +46,7 @@
                     :is="item.href ? 'a' : 'p'"
                     :href="item.href"
                     :target="item.target"
-                    v-html="item.value"
-                  />
+                  >{{ item.value }}</component>
                 </div>
               </div>
 

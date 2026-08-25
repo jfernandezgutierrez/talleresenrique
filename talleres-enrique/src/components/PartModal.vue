@@ -119,7 +119,7 @@ import { ref, computed, watch } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
 
 const props = defineProps({ part: { type: Object, default: null } })
-const emit  = defineEmits(['close'])
+defineEmits(['close'])
 
 const settings = useSettingsStore()
 

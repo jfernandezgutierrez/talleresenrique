@@ -24,12 +24,12 @@ export const useThemeStore = defineStore('theme', () => {
     if (!THEMES.some(t => t.id === themeId)) themeId = 'campo'
     current.value = themeId
     apply(themeId)
-    try { localStorage.setItem(STORAGE_KEY, themeId) } catch (e) { /* ignore */ }
+    try { localStorage.setItem(STORAGE_KEY, themeId) } catch { /* ignore */ }
   }
 
   function initTheme() {
     let saved = 'campo'
-    try { saved = localStorage.getItem(STORAGE_KEY) || 'campo' } catch (e) { /* ignore */ }
+    try { saved = localStorage.getItem(STORAGE_KEY) || 'campo' } catch { /* ignore */ }
     setTheme(saved)
   }
 

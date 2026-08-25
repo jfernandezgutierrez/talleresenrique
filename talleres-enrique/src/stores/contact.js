@@ -15,7 +15,7 @@ export const useContactStore = defineStore('contact', () => {
       await new Promise(resolve => setTimeout(resolve, 900))
       console.log('Mensaje enviado:', payload)
       sent.value = true
-    } catch (e) {
+    } catch {
       error.value = 'Error al enviar el mensaje. Por favor inténtalo de nuevo.'
     } finally {
       sending.value = false

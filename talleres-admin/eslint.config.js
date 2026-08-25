@@ -1,0 +1,20 @@
+import js from '@eslint/js'
+import pluginVue from 'eslint-plugin-vue'
+import globals from 'globals'
+
+export default [
+  { ignores: ['dist/**', 'node_modules/**', 'src-tauri/gen/**', 'src-tauri/target/**'] },
+  js.configs.recommended,
+  ...pluginVue.configs['flat/essential'],
+  {
+    files: ['**/*.{js,mjs,vue}'],
+    languageOptions: { globals: { ...globals.browser, ...globals.node } },
+    rules: {
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
+      'vue/html-self-closing': 'off',
+      'vue/max-attributes-per-line': 'off',
+      'vue/multi-word-component-names': 'off',
+      'vue/singleline-html-element-content-newline': 'off',
+    },
+  },
+]

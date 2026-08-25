@@ -15,12 +15,12 @@ export const useIconStyleStore = defineStore('iconStyle', () => {
   function setStyle(styleId) {
     if (!ICON_STYLES.some(s => s.id === styleId)) styleId = 'emoji'
     current.value = styleId
-    try { localStorage.setItem(STORAGE_KEY, styleId) } catch (e) { /* ignore */ }
+    try { localStorage.setItem(STORAGE_KEY, styleId) } catch { /* ignore */ }
   }
 
   function initStyle() {
     let saved = 'emoji'
-    try { saved = localStorage.getItem(STORAGE_KEY) || 'emoji' } catch (e) { /* ignore */ }
+    try { saved = localStorage.getItem(STORAGE_KEY) || 'emoji' } catch { /* ignore */ }
     setStyle(saved)
   }
 

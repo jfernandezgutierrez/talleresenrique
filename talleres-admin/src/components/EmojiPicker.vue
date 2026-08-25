@@ -55,9 +55,9 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, nextTick, onMounted, onUnmounted } from 'vue'
+import { ref, computed, nextTick, onMounted, onUnmounted } from 'vue'
 
-const props  = defineProps({ modelValue: { type: String, default: '📦' } })
+defineProps({ modelValue: { type: String, default: '📦' } })
 const emit   = defineEmits(['update:modelValue'])
 
 const open        = ref(false)
