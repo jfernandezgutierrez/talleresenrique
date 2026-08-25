@@ -3,12 +3,14 @@
     <!-- Page header -->
     <section class="page-hero">
       <div class="container">
-        <span class="section-tag"><AppIcon name="package" :size="14" /> Recambios &amp; Repuestos</span>
+        <span class="section-tag"
+          ><AppIcon name="package" :size="14" /> Recambios &amp; Repuestos</span
+        >
         <h1 class="section-title">Catálogo de <span>Piezas</span></h1>
         <div class="divider" />
         <p class="section-desc">
-          Consulta nuestro inventario de recambios. ¿No encuentras lo que buscas?
-          Contáctanos y lo encontramos para ti.
+          Consulta nuestro inventario de recambios. ¿No encuentras lo que buscas? Contáctanos y lo
+          encontramos para ti.
         </p>
       </div>
     </section>
@@ -16,26 +18,41 @@
     <!-- Catalog content -->
     <section class="section-pad">
       <div class="container">
-
         <!-- Toolbar -->
         <div class="toolbar">
           <div class="search-box" :class="{ focused: searchFocused }">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.35-4.35" />
             </svg>
             <input
+              aria-label="Buscar piezas"
               v-model="store.searchQuery"
               type="text"
               placeholder="Buscar por nombre, referencia, modelo…"
               @focus="searchFocused = true"
               @blur="searchFocused = false"
             />
-            <button v-if="store.searchQuery" class="clear-btn" @click="store.clearSearch" aria-label="Limpiar búsqueda">✕</button>
+            <button
+              v-if="store.searchQuery"
+              class="clear-btn"
+              @click="store.clearSearch"
+              aria-label="Limpiar búsqueda"
+            >
+              ✕
+            </button>
           </div>
 
-          <div class="results-count">
-            Mostrando <strong>{{ store.filteredParts.length }}</strong>
-            de {{ store.parts.length }} piezas
+          <div class="results-count" role="status" aria-live="polite">
+            Mostrando <strong>{{ store.filteredParts.length }}</strong> de
+            {{ store.parts.length }} piezas
           </div>
         </div>
 
@@ -44,6 +61,7 @@
           <button
             class="cat-btn"
             :class="{ active: store.activeCategory === 'Todos' }"
+            :aria-pressed="store.activeCategory === 'Todos'"
             @click="store.setCategory('Todos')"
           >
             <AppIcon name="search" :size="14" /> Todos
@@ -54,6 +72,7 @@
             :key="cat.name"
             class="cat-btn"
             :class="{ active: store.activeCategory === cat.name }"
+            :aria-pressed="store.activeCategory === cat.name"
             @click="store.setCategory(cat.name)"
           >
             {{ cat.icon }} {{ cat.name }}
@@ -62,13 +81,13 @@
         </div>
 
         <!-- Loading -->
-        <div v-if="store.loading" class="loading-state">
+        <div v-if="store.loading" class="loading-state" role="status" aria-live="polite">
           <span class="loading-spinner">⏳</span>
           <p>Cargando catálogo…</p>
         </div>
 
         <!-- Error -->
-        <div v-else-if="store.error" class="error-state">
+        <div v-else-if="store.error" class="error-state" role="alert">
           <span>⚠️</span>
           <p>Error al cargar el catálogo. <button @click="store.loadAll()">Reintentar</button></p>
         </div>
@@ -91,8 +110,17 @@
           <div v-else class="no-results" :key="'empty'">
             <span class="no-icon"><AppIcon name="search" :size="40" /></span>
             <h3>¿No encuentras la pieza?</h3>
-            <p>Envíanos la marca, el modelo, la referencia y una foto por WhatsApp y te decimos disponibilidad y precio.</p>
-            <a :href="waNotFoundUrl" target="_blank" rel="noopener" class="btn btn-whatsapp not-found-btn"><AppIcon name="message-circle" /> Enviar por WhatsApp</a>
+            <p>
+              Envíanos la marca, el modelo, la referencia y una foto por WhatsApp y te decimos
+              disponibilidad y precio.
+            </p>
+            <a
+              :href="waNotFoundUrl"
+              target="_blank"
+              rel="noopener"
+              class="btn btn-whatsapp not-found-btn"
+              ><AppIcon name="message-circle" /> Enviar por WhatsApp</a
+            >
           </div>
         </Transition>
       </div>
@@ -108,13 +136,13 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { usePartsStore } from '@/stores/parts'
 import { useSettingsStore } from '@/stores/settings'
-import PartCard  from '@/components/PartCard.vue'
+import PartCard from '@/components/PartCard.vue'
 import PartModal from '@/components/PartModal.vue'
-import AppIcon   from '@/components/AppIcon.vue'
+import AppIcon from '@/components/AppIcon.vue'
 
-const store        = usePartsStore()
-const settings     = useSettingsStore()
-const route        = useRoute()
+const store = usePartsStore()
+const settings = useSettingsStore()
+const route = useRoute()
 const selectedPart = ref(null)
 const searchFocused = ref(false)
 
@@ -146,10 +174,20 @@ const waNotFoundUrl = computed(() => {
   transition: background-color 0.3s ease;
 }
 
-.page-hero .section-title { color: var(--header-text); }
-.page-hero .section-tag   { background: rgba(245,197,24,0.15); color: var(--yellow); border-color: rgba(245,197,24,0.3); }
-.page-hero .section-desc  { color: var(--header-text-soft); }
-.page-hero .divider       { background: linear-gradient(to right, var(--yellow), var(--green-light)); }
+.page-hero .section-title {
+  color: var(--header-text);
+}
+.page-hero .section-tag {
+  background: rgba(245, 197, 24, 0.15);
+  color: var(--yellow);
+  border-color: rgba(245, 197, 24, 0.3);
+}
+.page-hero .section-desc {
+  color: var(--header-text-soft);
+}
+.page-hero .divider {
+  background: linear-gradient(to right, var(--yellow), var(--green-light));
+}
 
 /* Toolbar */
 .toolbar {
@@ -178,10 +216,13 @@ const waNotFoundUrl = computed(() => {
 .search-box.focused {
   border-color: var(--green-light);
   background: var(--surface);
-  box-shadow: 0 0 0 3px rgba(74,158,74,0.12);
+  box-shadow: 0 0 0 3px rgba(74, 158, 74, 0.12);
 }
 
-.search-box svg { color: var(--gray-dark); flex-shrink: 0; }
+.search-box svg {
+  color: var(--gray-dark);
+  flex-shrink: 0;
+}
 
 .search-box input {
   border: none;
@@ -192,7 +233,9 @@ const waNotFoundUrl = computed(() => {
   outline: none;
 }
 
-.search-box input::placeholder { color: var(--gray-dark); }
+.search-box input::placeholder {
+  color: var(--gray-dark);
+}
 
 .clear-btn {
   background: none;
@@ -203,7 +246,9 @@ const waNotFoundUrl = computed(() => {
   transition: var(--transition);
 }
 
-.clear-btn:hover { color: var(--text-main); }
+.clear-btn:hover {
+  color: var(--text-main);
+}
 
 .results-count {
   font-size: 0.87rem;
@@ -211,7 +256,9 @@ const waNotFoundUrl = computed(() => {
   white-space: nowrap;
 }
 
-.results-count strong { color: var(--green-mid); }
+.results-count strong {
+  color: var(--green-mid);
+}
 
 /* Category filters */
 .cat-filters {
@@ -232,7 +279,9 @@ const waNotFoundUrl = computed(() => {
   color: var(--text-soft);
   font-size: 0.85rem;
   font-weight: 600;
-  transition: var(--transition), background-color 0.3s ease;
+  transition:
+    var(--transition),
+    background-color 0.3s ease;
 }
 
 .cat-btn:hover {
@@ -247,7 +296,7 @@ const waNotFoundUrl = computed(() => {
 }
 
 .cat-count {
-  background: rgba(0,0,0,0.12);
+  background: rgba(0, 0, 0, 0.12);
   border-radius: 10px;
   padding: 0 6px;
   font-size: 0.72rem;
@@ -272,7 +321,11 @@ const waNotFoundUrl = computed(() => {
   color: var(--text-soft);
 }
 
-.no-icon { font-size: 3.5rem; display: block; margin-bottom: 1rem; }
+.no-icon {
+  font-size: 3.5rem;
+  display: block;
+  margin-bottom: 1rem;
+}
 
 .no-results h3 {
   font-size: 1.4rem;
@@ -280,7 +333,12 @@ const waNotFoundUrl = computed(() => {
   margin-bottom: 0.5rem;
 }
 
-.no-results p { font-size: 0.92rem; line-height: 1.6; max-width: 420px; margin: 0 auto; }
+.no-results p {
+  font-size: 0.92rem;
+  line-height: 1.6;
+  max-width: 420px;
+  margin: 0 auto;
+}
 
 .no-results a {
   color: var(--green-mid);
@@ -300,9 +358,17 @@ const waNotFoundUrl = computed(() => {
   color: var(--text-soft);
 }
 
-.loading-spinner { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+.loading-spinner {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 1rem;
+}
 
-.error-state span { font-size: 2.5rem; display: block; margin-bottom: 1rem; }
+.error-state span {
+  font-size: 2.5rem;
+  display: block;
+  margin-bottom: 1rem;
+}
 .error-state button {
   color: var(--green-mid);
   font-weight: 600;
@@ -312,11 +378,17 @@ const waNotFoundUrl = computed(() => {
 }
 
 @media (max-width: 640px) {
-  .parts-grid { grid-template-columns: repeat(2, 1fr); }
-  .search-box { max-width: 100%; }
+  .parts-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .search-box {
+    max-width: 100%;
+  }
 }
 
 @media (max-width: 400px) {
-  .parts-grid { grid-template-columns: 1fr; }
+  .parts-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

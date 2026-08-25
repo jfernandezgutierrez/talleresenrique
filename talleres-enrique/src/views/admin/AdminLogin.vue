@@ -30,9 +30,7 @@
           />
         </div>
         <p v-if="error" class="error-msg">{{ error }}</p>
-        <button type="submit" class="btn btn-secondary login-btn">
-          🔐 Entrar al panel
-        </button>
+        <button type="submit" class="btn btn-secondary login-btn">🔐 Entrar al panel</button>
       </form>
 
       <RouterLink to="/" class="back-link">← Volver a la web</RouterLink>
@@ -45,11 +43,11 @@ import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 
-const auth     = useAuthStore()
-const router   = useRouter()
-const email    = ref('')
+const auth = useAuthStore()
+const router = useRouter()
+const email = ref('')
 const password = ref('')
-const error    = ref('')
+const error = ref('')
 
 async function doLogin() {
   error.value = ''
@@ -80,7 +78,7 @@ async function doLogin() {
   width: 100%;
   max-width: 400px;
   text-align: center;
-  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
 }
 
 .login-logo {
@@ -114,7 +112,9 @@ async function doLogin() {
   margin-bottom: 1.8rem;
 }
 
-.login-form { text-align: left; }
+.login-form {
+  text-align: left;
+}
 
 .login-btn {
   width: 100%;
@@ -141,5 +141,7 @@ async function doLogin() {
   transition: var(--transition);
 }
 
-.back-link:hover { color: var(--green-mid); }
+.back-link:hover {
+  color: var(--green-mid);
+}
 </style>

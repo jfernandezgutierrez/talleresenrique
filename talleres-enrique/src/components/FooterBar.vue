@@ -2,7 +2,6 @@
   <footer class="footer">
     <div class="container">
       <div class="footer-grid">
-
         <!-- Brand -->
         <div class="footer-brand">
           <div class="brand-logo">
@@ -16,11 +15,21 @@
           </div>
           <p>
             Venta y reparación de maquinaria agrícola, ganadera, forestal, de jardín y ordeño.
-            Distribuidores oficiales de la marca <strong style="color:var(--yellow)">Rapid</strong> para toda Cantabria.
+            Distribuidores oficiales de la marca
+            <strong style="color: var(--yellow)">Rapid</strong> para toda Cantabria.
           </p>
           <div class="social-links">
-            <a :href="s.facebook_url" target="_blank" class="social-btn" aria-label="Facebook"><AppIcon name="facebook" :size="16" /></a>
-            <a :href="waUrl" target="_blank" class="social-btn" aria-label="WhatsApp"><AppIcon name="message-circle" :size="16" /></a>
+            <a
+              :href="s.facebook_url"
+              target="_blank"
+              rel="noopener"
+              class="social-btn"
+              aria-label="Facebook"
+              ><AppIcon name="facebook" :size="16"
+            /></a>
+            <a :href="waUrl" target="_blank" rel="noopener" class="social-btn" aria-label="WhatsApp"
+              ><AppIcon name="message-circle" :size="16"
+            /></a>
           </div>
         </div>
 
@@ -32,6 +41,9 @@
             <li><RouterLink to="/servicios">Servicios</RouterLink></li>
             <li><RouterLink to="/catalogo">Catálogo de piezas</RouterLink></li>
             <li><RouterLink to="/contacto">Contacto</RouterLink></li>
+            <li><RouterLink to="/aviso-legal">Aviso legal</RouterLink></li>
+            <li><RouterLink to="/privacidad">Privacidad</RouterLink></li>
+            <li><RouterLink to="/cookies">Cookies</RouterLink></li>
           </ul>
         </div>
 
@@ -53,9 +65,16 @@
           <h4>Contacto</h4>
           <ul class="contact-list">
             <li><AppIcon name="map-pin" :size="15" /> {{ s.address }}</li>
-            <li><AppIcon name="message-circle" :size="15" /> <a :href="waUrl" target="_blank" rel="noopener">WhatsApp: {{ s.phone }}</a></li>
-            <li><AppIcon name="phone" :size="15" /> <a :href="'tel:' + s.phone_link">{{ s.phone }}</a></li>
-            <li><AppIcon name="mail" :size="15" /> <a :href="'mailto:' + s.email">{{ s.email }}</a></li>
+            <li>
+              <AppIcon name="message-circle" :size="15" />
+              <a :href="waUrl" target="_blank" rel="noopener">WhatsApp: {{ s.phone }}</a>
+            </li>
+            <li>
+              <AppIcon name="phone" :size="15" /> <a :href="'tel:' + s.phone_link">{{ s.phone }}</a>
+            </li>
+            <li>
+              <AppIcon name="mail" :size="15" /> <a :href="'mailto:' + s.email">{{ s.email }}</a>
+            </li>
             <li><AppIcon name="clock" :size="15" /> Lun–Vie: {{ s.hours_weekday }}</li>
             <li><AppIcon name="clock" :size="15" /> Sáb: {{ s.hours_saturday }}</li>
             <li><AppIcon name="clock" :size="15" /> Dom: {{ s.hours_sunday }}</li>
@@ -77,7 +96,9 @@ import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
 const s = computed(() => settings.settings)
-const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'))
+const waUrl = computed(() =>
+  settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
+)
 
 const year = new Date().getFullYear()
 </script>
@@ -109,8 +130,7 @@ const year = new Date().getFullYear()
 .logo-icon {
   width: 60px;
   height: 60px;
-  
- 
+
   display: flex;
   align-items: center;
   justify-content: center;
@@ -215,7 +235,9 @@ const year = new Date().getFullYear()
   transition: var(--transition);
 }
 
-.contact-list li a:hover { color: var(--yellow); }
+.contact-list li a:hover {
+  color: var(--yellow);
+}
 
 /* Bottom */
 .footer-bottom {
@@ -229,11 +251,17 @@ const year = new Date().getFullYear()
 
 /* Responsive */
 @media (max-width: 960px) {
-  .footer-grid { grid-template-columns: 1fr 1fr; }
-  .footer-brand { grid-column: 1 / -1; }
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+  .footer-brand {
+    grid-column: 1 / -1;
+  }
 }
 
 @media (max-width: 560px) {
-  .footer-grid { grid-template-columns: 1fr; }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

@@ -10,8 +10,8 @@ export { defaultSettings } from './settings-defaults.js'
 // se quede sin datos de contacto.
 export const useSettingsStore = defineStore('settings', () => {
   const settings = ref(defaultSettings())
-  const loaded   = ref(false)
-  const loading  = ref(false)
+  const loaded = ref(false)
+  const loading = ref(false)
 
   async function loadSettings() {
     if (loading.value) return
@@ -36,7 +36,7 @@ export const useSettingsStore = defineStore('settings', () => {
       // Si la tabla no existe todavía o falla la red, seguimos con los defaults
       console.warn('No se pudo cargar site_settings, usando valores por defecto:', e.message || e)
     } finally {
-      loaded.value  = true
+      loaded.value = true
       loading.value = false
     }
   }

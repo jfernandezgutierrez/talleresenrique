@@ -1,6 +1,7 @@
 <template>
+  <a class="skip-link" href="#contenido-principal">Saltar al contenido</a>
   <NavBar />
-  <main>
+  <main id="contenido-principal" tabindex="-1">
     <RouterView />
   </main>
   <FooterBar />
@@ -16,7 +17,9 @@ import WhatsAppFloat from '@/components/WhatsAppFloat.vue'
 <style>
 .page-enter-active,
 .page-leave-active {
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transition:
+    opacity 0.25s ease,
+    transform 0.25s ease;
 }
 .page-enter-from {
   opacity: 0;

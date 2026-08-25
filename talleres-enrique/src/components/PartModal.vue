@@ -3,52 +3,112 @@
     <Transition name="fade">
       <div v-if="part" class="overlay" @click.self="$emit('close')">
         <div class="modal" role="dialog" aria-modal="true" :aria-label="`Detalle: ${part.name}`">
-
           <!-- ── Header ─────────────────────────────────────────────────── -->
           <div class="modal-head">
-            <button class="close-btn" @click="$emit('close')" aria-label="Cerrar">✕</button>
+            <button
+              ref="closeButton"
+              class="close-btn"
+              @click="emit('close')"
+              aria-label="Cerrar detalle"
+            >
+              ✕
+            </button>
           </div>
 
           <!-- ── Layout: galería + info ──────────────────────────────── -->
           <div class="modal-layout">
-
             <!-- Galería -->
             <div class="gallery-col">
-
               <!-- Carrusel principal (imágenes y vídeos mezclados) -->
               <div v-if="allMedia.length" class="carousel">
                 <div class="carousel-main">
-
                   <!-- Slide: imagen -->
-                  <img v-if="activeItem.type === 'image'" :src="activeItem.url" :alt="part.name" class="carousel-img" />
+                  <img
+                    v-if="activeItem.type === 'image'"
+                    :src="activeItem.url"
+                    :alt="part.name"
+                    class="carousel-img"
+                    decoding="async"
+                  />
 
                   <!-- Slide: vídeo -->
                   <div v-else class="video-embed-wrap">
-                    <iframe v-if="getYoutubeId(activeItem.url)"
+                    <iframe
+                      v-if="getYoutubeId(activeItem.url)"
                       :src="`https://www.youtube.com/embed/${getYoutubeId(activeItem.url)}`"
-                      class="video-iframe" frameborder="0"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen />
-                    <iframe v-else-if="getVimeoId(activeItem.url)"
+                      class="video-iframe"
+                      frameborder="0"
+                      :title="`Vídeo de ${part.name}`"
+                      allow="
+                        accelerometer;
+                        autoplay;
+                        clipboard-write;
+                        encrypted-media;
+                        gyroscope;
+                        picture-in-picture;
+                      "
+                      allowfullscreen
+                    />
+                    <iframe
+                      v-else-if="getVimeoId(activeItem.url)"
                       :src="`https://player.vimeo.com/video/${getVimeoId(activeItem.url)}`"
-                      class="video-iframe" frameborder="0"
-                      allow="autoplay; fullscreen; picture-in-picture" allowfullscreen />
-                    <video v-else :src="activeItem.url" class="video-direct" controls preload="metadata" />
+                      class="video-iframe"
+                      frameborder="0"
+                      :title="`Vídeo de ${part.name}`"
+                      allow="autoplay; fullscreen; picture-in-picture"
+                      allowfullscreen
+                    />
+                    <video
+                      v-else
+                      :src="activeItem.url"
+                      class="video-direct"
+                      controls
+                      preload="metadata"
+                    />
                   </div>
 
-                  <button v-if="allMedia.length > 1" class="carousel-arrow left"  @click="prevItem">‹</button>
-                  <button v-if="allMedia.length > 1" class="carousel-arrow right" @click="nextItem">›</button>
+                  <button
+                    v-if="allMedia.length > 1"
+                    class="carousel-arrow left"
+                    aria-label="Elemento anterior"
+                    @click="prevItem"
+                  >
+                    ‹
+                  </button>
+                  <button
+                    v-if="allMedia.length > 1"
+                    class="carousel-arrow right"
+                    aria-label="Elemento siguiente"
+                    @click="nextItem"
+                  >
+                    ›
+                  </button>
                   <div v-if="allMedia.length > 1" class="carousel-dots">
-                    <button v-for="(_, i) in allMedia" :key="i"
-                      class="carousel-dot" :class="{ active: i === activeIdx }"
-                      @click="activeIdx = i" />
+                    <button
+                      v-for="(_, i) in allMedia"
+                      :key="i"
+                      class="carousel-dot"
+                      :class="{ active: i === activeIdx }"
+                      :aria-label="`Ver elemento ${i + 1}`"
+                      @click="activeIdx = i"
+                    />
                   </div>
                 </div>
                 <div v-if="allMedia.length > 1" class="carousel-thumbs">
-                  <button v-for="(item, i) in allMedia" :key="i"
-                    class="thumb-btn" :class="{ active: i === activeIdx, 'is-video': item.type === 'video' }"
-                    @click="activeIdx = i">
-                    <img v-if="item.type === 'image'" :src="item.url" :alt="'Imagen ' + (i+1)" />
-                    <img v-else-if="getYoutubeId(item.url)" :src="`https://img.youtube.com/vi/${getYoutubeId(item.url)}/default.jpg`" :alt="'Vídeo ' + (i+1)" />
+                  <button
+                    v-for="(item, i) in allMedia"
+                    :key="i"
+                    class="thumb-btn"
+                    :class="{ active: i === activeIdx, 'is-video': item.type === 'video' }"
+                    :aria-label="`Ver ${item.type === 'video' ? 'vídeo' : 'imagen'} ${i + 1}`"
+                    @click="activeIdx = i"
+                  >
+                    <img v-if="item.type === 'image'" :src="item.url" :alt="'Imagen ' + (i + 1)" />
+                    <img
+                      v-else-if="getYoutubeId(item.url)"
+                      :src="`https://img.youtube.com/vi/${getYoutubeId(item.url)}/default.jpg`"
+                      :alt="'Vídeo ' + (i + 1)"
+                    />
                     <span v-else class="thumb-video-icon">🎬</span>
                     <span v-if="item.type === 'video'" class="thumb-play">▶</span>
                   </button>
@@ -64,7 +124,10 @@
             <!-- Info de la pieza -->
             <div class="info-col">
               <!-- Categoría badge -->
-              <span class="cat-badge" :style="{ background: part.catColor + '22', color: part.catColor }">
+              <span
+                class="cat-badge"
+                :style="{ background: part.catColor + '22', color: part.catColor }"
+              >
                 {{ part.category }}
               </span>
 
@@ -99,15 +162,22 @@
               <!-- Acción de consulta: solo WhatsApp -->
               <div class="quick-actions">
                 <a class="action-btn whatsapp" :href="whatsappUrl" target="_blank" rel="noopener">
-                  <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.107 1.521 5.833L.057 23.571a.5.5 0 0 0 .612.612l5.638-1.47A11.934 11.934 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.866 9.866 0 0 1-5.032-1.378l-.36-.214-3.733.973.999-3.627-.235-.373A9.867 9.867 0 0 1 2.118 12C2.118 6.533 6.533 2.118 12 2.118S21.882 6.533 21.882 12 17.467 21.882 12 21.882z"/></svg>
+                  <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18">
+                    <path
+                      d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"
+                    />
+                    <path
+                      d="M12 0C5.373 0 0 5.373 0 12c0 2.119.553 4.107 1.521 5.833L.057 23.571a.5.5 0 0 0 .612.612l5.638-1.47A11.934 11.934 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.882a9.866 9.866 0 0 1-5.032-1.378l-.36-.214-3.733.973.999-3.627-.235-.373A9.867 9.867 0 0 1 2.118 12C2.118 6.533 6.533 2.118 12 2.118S21.882 6.533 21.882 12 17.467 21.882 12 21.882z"
+                    />
+                  </svg>
                   Consultar por WhatsApp
                 </a>
-                <p class="quick-actions-hint">Te respondemos directamente por WhatsApp con disponibilidad y precio.</p>
+                <p class="quick-actions-hint">
+                  Te respondemos directamente por WhatsApp con disponibilidad y precio.
+                </p>
               </div>
-
             </div>
           </div>
-
         </div>
       </div>
     </Transition>
@@ -115,30 +185,31 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed, watch, nextTick, onBeforeUnmount } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
 
 const props = defineProps({ part: { type: Object, default: null } })
-defineEmits(['close'])
+const emit = defineEmits(['close'])
 
 const settings = useSettingsStore()
 
 const activeIdx = ref(0)
+const closeButton = ref(null)
 
 const allImages = computed(() => {
   if (!props.part) return []
   const media = props.part.media || []
-  const imgs  = media.filter(m => m.type === 'image')
+  const imgs = media.filter((m) => m.type === 'image')
   if (imgs.length) {
-    const primary = imgs.find(m => m.is_primary)
-    return primary ? [primary, ...imgs.filter(m => !m.is_primary)] : imgs
+    const primary = imgs.find((m) => m.is_primary)
+    return primary ? [primary, ...imgs.filter((m) => !m.is_primary)] : imgs
   }
   if (props.part.image) return [{ url: props.part.image, type: 'image', is_primary: true }]
   return []
 })
 
 const allVideos = computed(() =>
-  props.part ? (props.part.media || []).filter(m => m.type === 'video') : []
+  props.part ? (props.part.media || []).filter((m) => m.type === 'video') : [],
 )
 
 // Un único carrusel: primero las imágenes (principal primero), luego los vídeos
@@ -154,13 +225,42 @@ const whatsappUrl = computed(() => {
   return settings.whatsappUrl(msg)
 })
 
-watch(() => props.part, () => {
-  activeIdx.value = 0
-})
-watch(() => props.part, val => { document.body.style.overflow = val ? 'hidden' : '' })
+watch(
+  () => props.part,
+  async (part) => {
+    activeIdx.value = 0
+    if (part) {
+      await nextTick()
+      closeButton.value?.focus()
+    }
+  },
+)
+watch(
+  () => props.part,
+  (val) => {
+    document.body.style.overflow = val ? 'hidden' : ''
+  },
+)
 
-function prevItem() { activeIdx.value = (activeIdx.value - 1 + allMedia.value.length) % allMedia.value.length }
-function nextItem() { activeIdx.value = (activeIdx.value + 1) % allMedia.value.length }
+function onKeydown(event) {
+  if (!props.part) return
+  if (event.key === 'Escape') emit('close')
+  if (event.key === 'ArrowLeft' && allMedia.value.length > 1) prevItem()
+  if (event.key === 'ArrowRight' && allMedia.value.length > 1) nextItem()
+}
+
+window.addEventListener('keydown', onKeydown)
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+  document.body.style.overflow = ''
+})
+
+function prevItem() {
+  activeIdx.value = (activeIdx.value - 1 + allMedia.value.length) % allMedia.value.length
+}
+function nextItem() {
+  activeIdx.value = (activeIdx.value + 1) % allMedia.value.length
+}
 
 function getYoutubeId(url) {
   const m = url?.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)
@@ -176,7 +276,7 @@ function getVimeoId(url) {
 .overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -197,8 +297,14 @@ function getVimeoId(url) {
 }
 
 @keyframes slide-up {
-  from { opacity: 0; transform: translateY(20px); }
-  to   { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Header */
@@ -210,7 +316,7 @@ function getVimeoId(url) {
 }
 
 .close-btn {
-  background: rgba(0,0,0,0.45);
+  background: rgba(0, 0, 0, 0.45);
   color: #fff;
   border-radius: 50%;
   width: 34px;
@@ -223,7 +329,9 @@ function getVimeoId(url) {
   border: none;
   cursor: pointer;
 }
-.close-btn:hover { background: rgba(0,0,0,0.7); }
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
 
 /* Layout */
 .modal-layout {
@@ -247,11 +355,15 @@ function getVimeoId(url) {
   align-items: center;
   justify-content: center;
   font-size: 6rem;
-  color: rgba(255,255,255,0.3);
+  color: rgba(255, 255, 255, 0.3);
 }
 
 /* Carousel */
-.carousel { display: flex; flex-direction: column; flex: 1; }
+.carousel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 
 .carousel-main {
   position: relative;
@@ -270,7 +382,7 @@ function getVimeoId(url) {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   color: #fff;
   border: none;
   border-radius: 50%;
@@ -285,9 +397,15 @@ function getVimeoId(url) {
   z-index: 2;
   line-height: 1;
 }
-.carousel-arrow:hover { background: rgba(0,0,0,0.8); }
-.carousel-arrow.left  { left: 10px; }
-.carousel-arrow.right { right: 10px; }
+.carousel-arrow:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+.carousel-arrow.left {
+  left: 10px;
+}
+.carousel-arrow.right {
+  right: 10px;
+}
 
 .carousel-dots {
   position: absolute;
@@ -298,13 +416,18 @@ function getVimeoId(url) {
   gap: 6px;
 }
 .carousel-dot {
-  width: 8px; height: 8px;
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: rgba(255,255,255,0.4);
-  border: none; cursor: pointer; padding: 0;
+  background: rgba(255, 255, 255, 0.4);
+  border: none;
+  cursor: pointer;
+  padding: 0;
   transition: background 0.15s;
 }
-.carousel-dot.active { background: #fff; }
+.carousel-dot.active {
+  background: #fff;
+}
 
 .carousel-thumbs {
   display: flex;
@@ -315,18 +438,29 @@ function getVimeoId(url) {
   flex-shrink: 0;
 }
 .thumb-btn {
-  width: 52px; height: 40px;
+  width: 52px;
+  height: 40px;
   border-radius: 4px;
   overflow: hidden;
   flex-shrink: 0;
   border: 2px solid transparent;
-  padding: 0; cursor: pointer;
+  padding: 0;
+  cursor: pointer;
   background: #333;
   transition: border-color 0.15s;
 }
-.thumb-btn.active { border-color: var(--yellow); }
-.thumb-btn img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.thumb-btn.is-video { position: relative; }
+.thumb-btn.active {
+  border-color: var(--yellow);
+}
+.thumb-btn img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.thumb-btn.is-video {
+  position: relative;
+}
 
 .thumb-video-icon {
   width: 100%;
@@ -346,7 +480,7 @@ function getVimeoId(url) {
   justify-content: center;
   color: #fff;
   font-size: 0.85rem;
-  background: rgba(0,0,0,0.35);
+  background: rgba(0, 0, 0, 0.35);
   pointer-events: none;
 }
 
@@ -424,16 +558,32 @@ code {
   font-weight: 700;
 }
 .stock-dot {
-  width: 9px; height: 9px;
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
   flex-shrink: 0;
 }
-.stock-available { background: #f0fdf4; color: #16a34a; }
-.stock-available .stock-dot { background: #22c55e; }
-.stock-low       { background: #fffbeb; color: #d97706; }
-.stock-low .stock-dot       { background: #f59e0b; }
-.stock-out       { background: #fef2f2; color: #dc2626; }
-.stock-out .stock-dot       { background: #ef4444; }
+.stock-available {
+  background: #f0fdf4;
+  color: #16a34a;
+}
+.stock-available .stock-dot {
+  background: #22c55e;
+}
+.stock-low {
+  background: #fffbeb;
+  color: #d97706;
+}
+.stock-low .stock-dot {
+  background: #f59e0b;
+}
+.stock-out {
+  background: #fef2f2;
+  color: #dc2626;
+}
+.stock-out .stock-dot {
+  background: #ef4444;
+}
 
 /* Compat box */
 .compat-box {
@@ -444,17 +594,44 @@ code {
   border-radius: 8px;
   padding: 0.7rem 0.9rem;
 }
-.compat-icon { font-size: 1.3rem; flex-shrink: 0; margin-top: 1px; }
-.compat-title { font-size: 0.68rem; font-weight: 700; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 2px; }
-.compat-text  { font-size: 0.85rem; color: var(--text-main); line-height: 1.4; }
+.compat-icon {
+  font-size: 1.3rem;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.compat-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+}
+.compat-text {
+  font-size: 0.85rem;
+  color: var(--text-main);
+  line-height: 1.4;
+}
 
 /* Description */
 .description-box {
   border-left: 3px solid var(--green-light);
   padding-left: 0.8rem;
 }
-.desc-title { font-size: 0.68rem; font-weight: 700; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-.desc-text  { font-size: 0.88rem; color: var(--text-main); line-height: 1.6; margin: 0; }
+.desc-title {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+.desc-text {
+  font-size: 0.88rem;
+  color: var(--text-main);
+  line-height: 1.6;
+  margin: 0;
+}
 
 /* Quick actions */
 .quick-actions {
@@ -486,7 +663,9 @@ code {
   background: #25d366;
   color: #fff;
 }
-.action-btn.whatsapp:hover { background: #1ebe5a; }
+.action-btn.whatsapp:hover {
+  background: #1ebe5a;
+}
 .quick-actions-hint {
   text-align: center;
   font-size: 0.8rem;
@@ -496,9 +675,13 @@ code {
 
 /* Fade transition */
 .fade-enter-active,
-.fade-leave-active { transition: opacity 0.2s ease; }
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
 .fade-enter-from,
-.fade-leave-to     { opacity: 0; }
+.fade-leave-to {
+  opacity: 0;
+}
 
 /* ── Responsive ───────────────────────────────────────────────────── */
 @media (max-width: 700px) {
@@ -509,8 +692,14 @@ code {
     border-radius: 16px 16px 0 0;
     max-height: 260px;
   }
-  .carousel-main { min-height: 200px; }
-  .info-col { padding: 1.2rem; }
-  .part-title { font-size: 1.2rem; }
+  .carousel-main {
+    min-height: 200px;
+  }
+  .info-col {
+    padding: 1.2rem;
+  }
+  .part-title {
+    font-size: 1.2rem;
+  }
 }
 </style>

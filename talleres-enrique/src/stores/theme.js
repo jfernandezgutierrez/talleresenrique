@@ -2,8 +2,8 @@ import { ref } from 'vue'
 import { defineStore } from 'pinia'
 
 export const THEMES = [
-  { id: 'campo',  label: 'Campo',  icon: '🌿' }, // verde original
-  { id: 'claro',  label: 'Claro',  icon: '☀️' }, // tonos blancos
+  { id: 'campo', label: 'Campo', icon: '🌿' }, // verde original
+  { id: 'claro', label: 'Claro', icon: '☀️' }, // tonos blancos
   { id: 'oscuro', label: 'Oscuro', icon: '⚙️' }, // mecánico / industrial
 ]
 
@@ -21,15 +21,23 @@ export const useThemeStore = defineStore('theme', () => {
   }
 
   function setTheme(themeId) {
-    if (!THEMES.some(t => t.id === themeId)) themeId = 'campo'
+    if (!THEMES.some((t) => t.id === themeId)) themeId = 'campo'
     current.value = themeId
     apply(themeId)
-    try { localStorage.setItem(STORAGE_KEY, themeId) } catch { /* ignore */ }
+    try {
+      localStorage.setItem(STORAGE_KEY, themeId)
+    } catch {
+      /* ignore */
+    }
   }
 
   function initTheme() {
     let saved = 'campo'
-    try { saved = localStorage.getItem(STORAGE_KEY) || 'campo' } catch { /* ignore */ }
+    try {
+      saved = localStorage.getItem(STORAGE_KEY) || 'campo'
+    } catch {
+      /* ignore */
+    }
     setTheme(saved)
   }
 

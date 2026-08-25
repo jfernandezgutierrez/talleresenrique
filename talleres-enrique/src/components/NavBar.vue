@@ -1,7 +1,6 @@
 <template>
   <header class="navbar" :class="{ scrolled }">
     <div class="nav-inner">
-
       <!-- Logo -->
       <RouterLink to="/" class="nav-logo" @click="closeMobile">
         <div class="logo-icon">
@@ -15,11 +14,21 @@
 
       <!-- Links desktop -->
       <nav class="nav-links" aria-label="Navegación principal">
-        <RouterLink to="/"          class="nav-link" active-class="active" exact-active-class="active"><AppIcon name="home" />Inicio</RouterLink>
-        <RouterLink to="/servicios" class="nav-link" active-class="active"><AppIcon name="wrench" />Servicios</RouterLink>
-        <RouterLink to="/catalogo"  class="nav-link" active-class="active"><AppIcon name="package" />Catálogo</RouterLink>
-        <RouterLink to="/contacto"  class="nav-link" active-class="active"><AppIcon name="phone" />Contacto</RouterLink>
-        <a :href="waUrl" target="_blank" rel="noopener" class="nav-link nav-cta"><AppIcon name="message-circle" />WhatsApp</a>
+        <RouterLink to="/" class="nav-link" active-class="active" exact-active-class="active"
+          ><AppIcon name="home" />Inicio</RouterLink
+        >
+        <RouterLink to="/servicios" class="nav-link" active-class="active"
+          ><AppIcon name="wrench" />Servicios</RouterLink
+        >
+        <RouterLink to="/catalogo" class="nav-link" active-class="active"
+          ><AppIcon name="package" />Catálogo</RouterLink
+        >
+        <RouterLink to="/contacto" class="nav-link" active-class="active"
+          ><AppIcon name="phone" />Contacto</RouterLink
+        >
+        <a :href="waUrl" target="_blank" rel="noopener" class="nav-link nav-cta"
+          ><AppIcon name="message-circle" />WhatsApp</a
+        >
       </nav>
 
       <!-- Selectores de estilo: tema y, justo debajo, estilo de iconos -->
@@ -33,7 +42,9 @@
             :title="t.label"
             :aria-pressed="themeStore.current === t.id"
             @click="themeStore.setTheme(t.id)"
-          >{{ t.icon }}</button>
+          >
+            {{ t.icon }}
+          </button>
         </div>
 
         <div class="icon-switch" role="group" aria-label="Elegir estilo de iconos">
@@ -57,7 +68,7 @@
         :class="{ open: mobileOpen }"
         @click="mobileOpen = !mobileOpen"
         :aria-expanded="mobileOpen"
-        aria-label="Abrir menú"
+        :aria-label="mobileOpen ? 'Cerrar menú' : 'Abrir menú'"
       >
         <span /><span /><span />
       </button>
@@ -66,11 +77,26 @@
     <!-- Mobile menu -->
     <Transition name="slide-down">
       <nav v-if="mobileOpen" class="nav-mobile" aria-label="Menú móvil">
-        <RouterLink to="/"          class="mob-link" @click="closeMobile"><AppIcon name="home" />Inicio</RouterLink>
-        <RouterLink to="/servicios" class="mob-link" @click="closeMobile"><AppIcon name="wrench" />Servicios</RouterLink>
-        <RouterLink to="/catalogo"  class="mob-link" @click="closeMobile"><AppIcon name="package" />Catálogo de Piezas</RouterLink>
-        <RouterLink to="/contacto"  class="mob-link" @click="closeMobile"><AppIcon name="phone" />Contacto</RouterLink>
-        <a :href="waUrl" target="_blank" rel="noopener" class="mob-link mob-cta" @click="closeMobile"><AppIcon name="message-circle" />Escríbenos por WhatsApp</a>
+        <RouterLink to="/" class="mob-link" @click="closeMobile"
+          ><AppIcon name="home" />Inicio</RouterLink
+        >
+        <RouterLink to="/servicios" class="mob-link" @click="closeMobile"
+          ><AppIcon name="wrench" />Servicios</RouterLink
+        >
+        <RouterLink to="/catalogo" class="mob-link" @click="closeMobile"
+          ><AppIcon name="package" />Catálogo de Piezas</RouterLink
+        >
+        <RouterLink to="/contacto" class="mob-link" @click="closeMobile"
+          ><AppIcon name="phone" />Contacto</RouterLink
+        >
+        <a
+          :href="waUrl"
+          target="_blank"
+          rel="noopener"
+          class="mob-link mob-cta"
+          @click="closeMobile"
+          ><AppIcon name="message-circle" />Escríbenos por WhatsApp</a
+        >
 
         <div class="theme-switch mobile" role="group" aria-label="Elegir estilo de la web">
           <button
@@ -79,7 +105,9 @@
             class="theme-btn"
             :class="{ active: themeStore.current === t.id }"
             @click="themeStore.setTheme(t.id)"
-          >{{ t.icon }} {{ t.label }}</button>
+          >
+            {{ t.icon }} {{ t.label }}
+          </button>
         </div>
 
         <div class="icon-switch mobile" role="group" aria-label="Elegir estilo de iconos">
@@ -108,12 +136,14 @@ import { useThemeStore } from '@/stores/theme'
 import { useIconStyleStore } from '@/stores/iconStyle'
 import AppIcon from '@/components/AppIcon.vue'
 
-const settings       = useSettingsStore()
-const themeStore     = useThemeStore()
+const settings = useSettingsStore()
+const themeStore = useThemeStore()
 const iconStyleStore = useIconStyleStore()
-const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'))
+const waUrl = computed(() =>
+  settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
+)
 
-const scrolled   = ref(false)
+const scrolled = ref(false)
 const mobileOpen = ref(false)
 
 function onScroll() {
@@ -124,19 +154,33 @@ function closeMobile() {
   mobileOpen.value = false
 }
 
-onMounted(() => window.addEventListener('scroll', onScroll, { passive: true }))
-onUnmounted(() => window.removeEventListener('scroll', onScroll))
+function onKeydown(event) {
+  if (event.key === 'Escape') closeMobile()
+}
+
+onMounted(() => {
+  window.addEventListener('scroll', onScroll, { passive: true })
+  window.addEventListener('keydown', onKeydown)
+})
+onUnmounted(() => {
+  window.removeEventListener('scroll', onScroll)
+  window.removeEventListener('keydown', onKeydown)
+})
 </script>
 
 <style scoped>
 .navbar {
   position: fixed;
-  top: 0; left: 0; right: 0;
+  top: 0;
+  left: 0;
+  right: 0;
   z-index: 1000;
   background: var(--nav-bg);
   backdrop-filter: blur(8px);
   border-bottom: 3px solid var(--yellow);
-  transition: background-color 0.3s ease, box-shadow 0.25s ease;
+  transition:
+    background-color 0.3s ease,
+    box-shadow 0.25s ease;
 }
 
 .navbar.scrolled {
@@ -164,7 +208,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 .logo-icon {
   width: 60px;
-  height:60px;  
+  height: 60px;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -223,7 +267,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 .nav-link:hover,
 .nav-link.active {
   color: var(--yellow);
-  background: rgba(245,197,24,0.1);
+  background: rgba(245, 197, 24, 0.1);
 }
 
 .nav-cta {
@@ -245,8 +289,8 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 }
 .nav-admin:hover {
   opacity: 1;
-  background: rgba(255,255,255,0.08) !important;
-  color: rgba(255,255,255,0.9) !important;
+  background: rgba(255, 255, 255, 0.08) !important;
+  color: rgba(255, 255, 255, 0.9) !important;
 }
 
 /* Selectores de estilo (tema + iconos), apilados verticalmente */
@@ -261,7 +305,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.15);
   border: 1px solid var(--header-border);
   border-radius: 20px;
   padding: 3px;
@@ -280,7 +324,9 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   opacity: 0.55;
 }
 
-.theme-btn:hover { opacity: 0.9; }
+.theme-btn:hover {
+  opacity: 0.9;
+}
 
 .theme-btn.active {
   background: var(--yellow);
@@ -318,7 +364,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   display: flex;
   align-items: center;
   gap: 2px;
-  background: rgba(0,0,0,0.15);
+  background: rgba(0, 0, 0, 0.15);
   border: 1px solid var(--header-border);
   border-radius: 20px;
   padding: 3px;
@@ -337,7 +383,9 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   opacity: 0.55;
 }
 
-.icon-style-btn:hover { opacity: 0.9; }
+.icon-style-btn:hover {
+  opacity: 0.9;
+}
 
 .icon-style-btn.active {
   background: var(--header-border-strong);
@@ -389,9 +437,16 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
   transition: var(--transition);
 }
 
-.hamburger.open span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-.hamburger.open span:nth-child(2) { opacity: 0; width: 0; }
-.hamburger.open span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+.hamburger.open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+.hamburger.open span:nth-child(2) {
+  opacity: 0;
+  width: 0;
+}
+.hamburger.open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
 
 /* Mobile menu */
 .nav-mobile {
@@ -417,7 +472,7 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 .mob-link:hover,
 .mob-link.router-link-active {
-  background: rgba(245,197,24,0.1);
+  background: rgba(245, 197, 24, 0.1);
   color: var(--yellow);
 }
 
@@ -437,7 +492,9 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 /* Transition */
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 .slide-down-enter-from,
 .slide-down-leave-to {
@@ -447,8 +504,14 @@ onUnmounted(() => window.removeEventListener('scroll', onScroll))
 
 /* Responsive */
 @media (max-width: 768px) {
-  .nav-links     { display: none; }
-  .style-switches { display: none; }
-  .hamburger     { display: flex; }
+  .nav-links {
+    display: none;
+  }
+  .style-switches {
+    display: none;
+  }
+  .hamburger {
+    display: flex;
+  }
 }
 </style>

@@ -8,7 +8,8 @@
         <div class="divider" />
         <p class="section-desc">
           Venta y reparación de maquinaria agrícola, ganadera, forestal, de jardín y ordeño.
-          Distribuidores oficiales de la marca <strong style="color:var(--yellow)">Rapid</strong> y <strong style="color:var(--yellow)">Piva</strong> para toda Cantabria.
+          Distribuidores oficiales de la marca <strong style="color: var(--yellow)">Rapid</strong> y
+          <strong style="color: var(--yellow)">Piva</strong> para toda Cantabria.
         </p>
       </div>
     </section>
@@ -39,7 +40,9 @@
           <h3>¿Recogemos la máquina o reparamos en tu explotación?</h3>
           <p>{{ s.pickup_policy_text }}</p>
         </div>
-        <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp pickup-btn"><AppIcon name="message-circle" /> Consultar</a>
+        <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp pickup-btn"
+          ><AppIcon name="message-circle" /> Consultar</a
+        >
       </div>
     </section>
 
@@ -47,7 +50,9 @@
     <section class="section-pad why-us">
       <div class="container">
         <div class="section-header">
-          <span class="section-tag"><AppIcon name="check-circle" :size="14" /> Por qué elegirnos</span>
+          <span class="section-tag"
+            ><AppIcon name="check-circle" :size="14" /> Por qué elegirnos</span
+          >
           <h2 class="section-title">Tu taller de <span>confianza</span></h2>
           <div class="divider" />
         </div>
@@ -69,7 +74,9 @@
             <h2>¿Necesitas presupuesto?</h2>
             <p>Cuéntanos la avería y te damos un presupuesto sin compromiso.</p>
           </div>
-          <RouterLink to="/contacto" class="btn btn-primary"><AppIcon name="phone" /> Solicitar presupuesto</RouterLink>
+          <RouterLink to="/contacto" class="btn btn-primary"
+            ><AppIcon name="phone" /> Solicitar presupuesto</RouterLink
+          >
         </div>
       </div>
     </section>
@@ -83,58 +90,140 @@ import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
 const s = computed(() => settings.settings)
-const waUrl = computed(() => settings.whatsappUrl('Hola, quería consultar sobre recogida o reparación en la explotación.'))
+const waUrl = computed(() =>
+  settings.whatsappUrl('Hola, quería consultar sobre recogida o reparación en la explotación.'),
+)
 
 const services = [
   {
-    icon: 'tractor', title: 'Maquinaria Agrícola',
+    icon: 'tractor',
+    title: 'Maquinaria Agrícola',
     desc: 'Venta y reparación de tractores, cosechadoras, empacadoras, segadoras y toda clase de maquinaria para el campo.',
-    items: ['Tractores de todas las marcas', 'Empacadoras y rotoempacadoras', 'Segadoras y acondicionadoras', 'Remolques y aperos', 'Esparcidoras y abonadoras'],
+    items: [
+      'Tractores de todas las marcas',
+      'Empacadoras y rotoempacadoras',
+      'Segadoras y acondicionadoras',
+      'Remolques y aperos',
+      'Esparcidoras y abonadoras',
+    ],
   },
   {
-    icon: 'cow', title: 'Maquinaria Ganadera y Ordeño',
+    icon: 'cow',
+    title: 'Maquinaria Ganadera y Ordeño',
     desc: 'Servicio técnico especializado en equipos para explotaciones ganaderas y salas de ordeño en el Valle de Pas.',
-    items: ['Equipos de ordeño', 'Tanques de refrigeración de leche', 'Distribuidores de pienso', 'Cercas eléctricas', 'Bebederos y comederos automáticos'],
+    items: [
+      'Equipos de ordeño',
+      'Tanques de refrigeración de leche',
+      'Distribuidores de pienso',
+      'Cercas eléctricas',
+      'Bebederos y comederos automáticos',
+    ],
   },
   {
-    icon: 'tree', title: 'Maquinaria Forestal',
+    icon: 'tree',
+    title: 'Maquinaria Forestal',
     desc: 'Reparación y mantenimiento de todo tipo de maquinaria para trabajos forestales y de monte.',
-    items: ['Motosierras profesionales', 'Desbrozadoras y rozadoras', 'Astilladoras de madera', 'Procesadoras forestales', 'Podadoras y telescópicas'],
+    items: [
+      'Motosierras profesionales',
+      'Desbrozadoras y rozadoras',
+      'Astilladoras de madera',
+      'Procesadoras forestales',
+      'Podadoras y telescópicas',
+    ],
   },
   {
-    icon: 'leaf', title: 'Maquinaria de Jardín',
+    icon: 'leaf',
+    title: 'Maquinaria de Jardín',
     desc: 'Distribuidores de la marca Rapid. Venta y reparación de segadoras hileradoras, cortacéspedes y tractores de jardín.',
-    items: ['Segadoras hileradoras Rapid Euro', 'Segadoras Rapid 505 y 507', 'Tractores de jardín', 'Cortacéspedes profesionales', 'Motocultores y motoazadas'],
+    items: [
+      'Segadoras hileradoras Rapid Euro',
+      'Segadoras Rapid 505 y 507',
+      'Tractores de jardín',
+      'Cortacéspedes profesionales',
+      'Motocultores y motoazadas',
+    ],
   },
   {
-    icon: 'star', title: 'Distribuidores Marca Rapid',
+    icon: 'star',
+    title: 'Distribuidores Marca Rapid',
     desc: 'Distribuidores oficiales de la marca Rapid para toda Cantabria. La mejor segadora hileradora del mercado.',
-    items: ['Segadora hileradora Rapid Euro', 'Amplio stock piezas originales Rapid', 'Servicio técnico oficial', 'Modelos Rapid 505, 507 y más', 'Asesoramiento personalizado'],
+    items: [
+      'Segadora hileradora Rapid Euro',
+      'Amplio stock piezas originales Rapid',
+      'Servicio técnico oficial',
+      'Modelos Rapid 505, 507 y más',
+      'Asesoramiento personalizado',
+    ],
   },
   {
-    icon: 'wrench', title: 'Taller de Reparación',
+    icon: 'wrench',
+    title: 'Taller de Reparación',
     desc: 'Reparación integral de motores, sistemas hidráulicos, transmisiones, electricidad y soldadura en todo tipo de maquinaria.',
-    items: ['Motores diesel y gasolina', 'Sistemas hidráulicos', 'Transmisiones y embragues', 'Diagnóstico electrónico', 'Soldadura MIG/TIG'],
+    items: [
+      'Motores diesel y gasolina',
+      'Sistemas hidráulicos',
+      'Transmisiones y embragues',
+      'Diagnóstico electrónico',
+      'Soldadura MIG/TIG',
+    ],
   },
   {
-    icon: 'package', title: 'Venta de Recambios',
+    icon: 'package',
+    title: 'Venta de Recambios',
     desc: 'Gran variedad de recambios originales para segadoras Rapid, Piva y todo tipo de maquinaria agrícola y de jardín.',
-    items: ['Piezas originales Rapid', 'Recambios marca Piva', 'Filtros aceite, combustible y aire', 'Correas y cadenas', 'Cuchillas y accesorios'],
+    items: [
+      'Piezas originales Rapid',
+      'Recambios marca Piva',
+      'Filtros aceite, combustible y aire',
+      'Correas y cadenas',
+      'Cuchillas y accesorios',
+    ],
   },
   {
-    icon: 'calendar', title: 'Mantenimiento Preventivo',
+    icon: 'calendar',
+    title: 'Mantenimiento Preventivo',
     desc: 'Planes de mantenimiento adaptados a cada máquina. Puesta a punto antes de campaña para evitar paradas.',
-    items: ['Revisión general anual', 'Cambio de aceite y filtros', 'Afilado y ajuste de cuchillas', 'Revisión antes de temporada', 'Contratos de mantenimiento'],
+    items: [
+      'Revisión general anual',
+      'Cambio de aceite y filtros',
+      'Afilado y ajuste de cuchillas',
+      'Revisión antes de temporada',
+      'Contratos de mantenimiento',
+    ],
   },
 ]
 
 const whyUs = [
-  { icon: 'trophy',        title: '+20 años de experiencia',    desc: 'Décadas de trabajo con toda clase de maquinaria agrícola en Cantabria y alrededores.' },
-  { icon: 'microscope',    title: 'Diagnóstico avanzado',        desc: 'Escáner electrónico y herramientas de última generación para un diagnóstico preciso.' },
-  { icon: 'zap',           title: 'Servicio urgente',            desc: 'Atendemos urgencias en menos de 24 horas. Sabemos que en el campo el tiempo es crítico.' },
-  { icon: 'check-circle',  title: 'Garantía en reparaciones',    desc: 'Todos nuestros trabajos llevan garantía. Tu tranquilidad es nuestra prioridad.' },
-  { icon: 'leaf',          title: 'Todas las marcas',            desc: 'John Deere, Fendt, Case, New Holland, Massey Ferguson, Deutz-Fahr y muchas más.' },
-  { icon: 'package',       title: 'Stock de piezas propio',      desc: 'Más de 1.200 piezas en stock para no perder tiempo esperando recambios.' },
+  {
+    icon: 'trophy',
+    title: '+20 años de experiencia',
+    desc: 'Décadas de trabajo con toda clase de maquinaria agrícola en Cantabria y alrededores.',
+  },
+  {
+    icon: 'microscope',
+    title: 'Diagnóstico avanzado',
+    desc: 'Escáner electrónico y herramientas de última generación para un diagnóstico preciso.',
+  },
+  {
+    icon: 'zap',
+    title: 'Servicio urgente',
+    desc: 'Atendemos urgencias en menos de 24 horas. Sabemos que en el campo el tiempo es crítico.',
+  },
+  {
+    icon: 'check-circle',
+    title: 'Garantía en reparaciones',
+    desc: 'Todos nuestros trabajos llevan garantía. Tu tranquilidad es nuestra prioridad.',
+  },
+  {
+    icon: 'leaf',
+    title: 'Todas las marcas',
+    desc: 'John Deere, Fendt, Case, New Holland, Massey Ferguson, Deutz-Fahr y muchas más.',
+  },
+  {
+    icon: 'package',
+    title: 'Stock de piezas propio',
+    desc: 'Más de 1.200 piezas en stock para no perder tiempo esperando recambios.',
+  },
 ]
 </script>
 
@@ -147,10 +236,20 @@ const whyUs = [
   transition: background-color 0.3s ease;
 }
 
-.page-hero .section-title { color: var(--header-text); }
-.page-hero .section-tag   { background: rgba(245,197,24,0.15); color: var(--yellow); border-color: rgba(245,197,24,0.3); }
-.page-hero .section-desc  { color: var(--header-text-soft); }
-.page-hero .divider       { background: linear-gradient(to right, var(--yellow), var(--green-light)); }
+.page-hero .section-title {
+  color: var(--header-text);
+}
+.page-hero .section-tag {
+  background: rgba(245, 197, 24, 0.15);
+  color: var(--yellow);
+  border-color: rgba(245, 197, 24, 0.3);
+}
+.page-hero .section-desc {
+  color: var(--header-text-soft);
+}
+.page-hero .divider {
+  background: linear-gradient(to right, var(--yellow), var(--green-light));
+}
 
 .services-grid {
   display: grid;
@@ -163,7 +262,9 @@ const whyUs = [
   border-radius: var(--radius);
   padding: 1.8rem;
   border: 1px solid var(--gray-mid);
-  transition: var(--transition), background-color 0.3s ease;
+  transition:
+    var(--transition),
+    background-color 0.3s ease;
 }
 
 .service-card:hover {
@@ -189,7 +290,7 @@ const whyUs = [
   justify-content: center;
   font-size: 1.5rem;
   flex-shrink: 0;
-  border: 1px solid rgba(74,158,74,0.2);
+  border: 1px solid rgba(74, 158, 74, 0.2);
 }
 
 .service-card h2 {
@@ -230,8 +331,8 @@ const whyUs = [
 /* Pickup banner */
 .pickup-banner {
   background: var(--green-pale);
-  border-top: 1px solid rgba(74,158,74,0.2);
-  border-bottom: 1px solid rgba(74,158,74,0.2);
+  border-top: 1px solid rgba(74, 158, 74, 0.2);
+  border-bottom: 1px solid rgba(74, 158, 74, 0.2);
   padding: 1.8rem 0;
 }
 
@@ -242,17 +343,34 @@ const whyUs = [
   flex-wrap: wrap;
 }
 
-.pickup-icon { font-size: 2rem; flex-shrink: 0; }
+.pickup-icon {
+  font-size: 2rem;
+  flex-shrink: 0;
+}
 
-.pickup-inner h3 { font-size: 1.05rem; color: var(--heading); margin-bottom: 0.2rem; }
-.pickup-inner p  { font-size: 0.88rem; color: var(--text-soft); }
+.pickup-inner h3 {
+  font-size: 1.05rem;
+  color: var(--heading);
+  margin-bottom: 0.2rem;
+}
+.pickup-inner p {
+  font-size: 0.88rem;
+  color: var(--text-soft);
+}
 
-.pickup-inner > div { flex: 1; min-width: 220px; }
+.pickup-inner > div {
+  flex: 1;
+  min-width: 220px;
+}
 
-.pickup-btn { flex-shrink: 0; }
+.pickup-btn {
+  flex-shrink: 0;
+}
 
 /* Why us */
-.why-us { background: var(--gray-light); }
+.why-us {
+  background: var(--gray-light);
+}
 
 .why-grid {
   display: grid;
@@ -271,7 +389,9 @@ const whyUs = [
   transition: background-color 0.3s ease;
 }
 
-.why-icon { font-size: 1.8rem; }
+.why-icon {
+  font-size: 1.8rem;
+}
 
 .why-card h3 {
   font-size: 1rem;
@@ -285,7 +405,10 @@ const whyUs = [
 }
 
 /* CTA strip */
-.cta-strip { background: var(--green-mid); padding: 3.5rem 0; }
+.cta-strip {
+  background: var(--green-mid);
+  padding: 3.5rem 0;
+}
 
 .cta-inner {
   display: flex;
@@ -295,10 +418,20 @@ const whyUs = [
   flex-wrap: wrap;
 }
 
-.cta-inner h2 { font-size: 1.7rem; color: var(--white); margin-bottom: 0.3rem; }
-.cta-inner  p { color: rgba(255,255,255,0.75); font-size: 0.95rem; }
+.cta-inner h2 {
+  font-size: 1.7rem;
+  color: var(--white);
+  margin-bottom: 0.3rem;
+}
+.cta-inner p {
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.95rem;
+}
 
 @media (max-width: 640px) {
-  .cta-inner { flex-direction: column; text-align: center; }
+  .cta-inner {
+    flex-direction: column;
+    text-align: center;
+  }
 }
 </style>
