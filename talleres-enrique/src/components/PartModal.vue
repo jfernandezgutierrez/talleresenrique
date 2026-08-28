@@ -218,10 +218,9 @@ const activeItem = computed(() => allMedia.value[activeIdx.value] || {})
 
 const whatsappUrl = computed(() => {
   if (!props.part) return '#'
-  const msg =
-    `Hola, me interesa la pieza *${props.part.name}*` +
-    (props.part.ref ? ` (REF: ${props.part.ref})` : '') +
-    `. ¿Podéis informarme sobre disponibilidad y precio?`
+  const msg = settings.settings.wa_part_message
+    .replace('{pieza}', props.part.name || '')
+    .replace('{referencia}', props.part.ref || 'sin referencia')
   return settings.whatsappUrl(msg)
 })
 

@@ -25,5 +25,15 @@ export function defaultSettings() {
     show_services: true,
     show_catalog: true,
     show_contact: true,
+    home_badge: 'Distribuidores Rapid · Toda Cantabria',
+    brands_text: '⭐ Rapid\n⭐ Piva\nJohn Deere\nFendt\nCase IH\nNew Holland\nMassey Ferguson\nDeutz-Fahr\nClaas\nSame\nHusqvarna\nStihl',
+    why_us_text: 'trophy|+20 años de experiencia|Décadas de trabajo con maquinaria agrícola en Cantabria.\nmicroscope|Diagnóstico avanzado|Herramientas de última generación para un diagnóstico preciso.\nzap|Servicio urgente|Atendemos urgencias con la mayor rapidez posible.\ncheck-circle|Garantía en reparaciones|Todos nuestros trabajos llevan garantía.',
+    home_services_title: 'Nuestros Servicios', home_services_description: 'Servicio integral de reparación y mantenimiento para toda clase de maquinaria agrícola y tractores.',
+    home_cta_title: '¿Tu máquina tiene una avería?', home_cta_text: 'Escríbenos por WhatsApp y te atendemos en el menor tiempo posible.',
+    services_page_title: 'Nuestros Servicios', services_page_description: 'Venta y reparación de maquinaria agrícola, ganadera, forestal, de jardín y ordeño.', services_cta_title: '¿Necesitas presupuesto?', services_cta_text: 'Cuéntanos la avería y te damos un presupuesto sin compromiso.',
+    catalog_page_title: 'Catálogo de Piezas', catalog_page_description: 'Consulta nuestro catálogo de piezas y recambios para maquinaria.', contact_page_title: 'Contacta con Nosotros', contact_page_description: 'Estamos en Selaya, Cantabria. Llámanos, mándanos un WhatsApp o visítanos.',
+    legal_notice_text: 'Talleres Enrique, con domicilio en C/ Pola n.º 2, Selaya, Cantabria.\n\nEste sitio informa sobre los servicios del taller y facilita canales de contacto.', privacy_text: 'La web no incluye formularios propios. Los datos enviados se tratarán para responder a la consulta.', cookies_text: 'La web no instala cookies publicitarias ni de analítica. Solo guarda preferencias visuales.', legal_updated_at_text: '25 de agosto de 2026', legal_pending: true,
+    wa_general_message: 'Hola, quería consultar sobre una máquina o pieza.', wa_contact_message: 'Hola, quería contactar con Talleres Enrique.', wa_pickup_message: 'Hola, quería consultar sobre recogida o reparación en la explotación.', wa_part_message: 'Hola, quería consultar por la pieza: {pieza} ({referencia}).',
+    banner_enabled: false, banner_title: '', banner_text: '', banner_type: 'info', banner_link_label: '', banner_link_url: '', banner_start_at: null, banner_end_at: null,
   }
 }

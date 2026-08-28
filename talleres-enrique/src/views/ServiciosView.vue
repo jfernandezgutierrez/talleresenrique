@@ -4,12 +4,10 @@
     <section class="page-hero">
       <div class="container">
         <span class="section-tag"><AppIcon name="gear" :size="14" /> Lo que hacemos</span>
-        <h1 class="section-title">Nuestros <span>Servicios</span></h1>
+        <h1 class="section-title">{{ s.services_page_title }}</h1>
         <div class="divider" />
         <p class="section-desc">
-          Venta y reparación de maquinaria agrícola, ganadera, forestal, de jardín y ordeño.
-          Distribuidores oficiales de la marca <strong style="color: var(--yellow)">Rapid</strong> y
-          <strong style="color: var(--yellow)">Piva</strong> para toda Cantabria.
+          {{ s.services_page_description }}
         </p>
       </div>
     </section>
@@ -74,12 +72,10 @@
       <div class="container">
         <div class="cta-inner">
           <div>
-            <h2>¿Necesitas presupuesto?</h2>
-            <p>Cuéntanos la avería y te damos un presupuesto sin compromiso.</p>
+            <h2>{{ s.services_cta_title }}</h2>
+            <p>{{ s.services_cta_text }}</p>
           </div>
-          <RouterLink to="/contacto" class="btn btn-primary"
-            ><AppIcon name="phone" /> Solicitar presupuesto</RouterLink
-          >
+          <a :href="generalWaUrl" target="_blank" rel="noopener" class="btn btn-primary"><AppIcon name="message-circle" /> Solicitar por WhatsApp</a>
         </div>
       </div>
     </section>
@@ -97,8 +93,9 @@ const servicesStore = useServicesStore()
 onMounted(() => servicesStore.loadServices())
 const s = computed(() => settings.settings)
 const waUrl = computed(() =>
-  settings.whatsappUrl('Hola, quería consultar sobre recogida o reparación en la explotación.'),
+  settings.whatsappUrl(s.value.wa_pickup_message),
 )
+const generalWaUrl = computed(() => settings.whatsappUrl(s.value.wa_general_message))
 const isEmoji = (value) => /[^\w-]/u.test(value || '')
 
 /* Los servicios se administran desde Supabase mediante el panel. */
@@ -201,7 +198,7 @@ const isEmoji = (value) => /[^\w-]/u.test(value || '')
   },
 ] */
 
-const whyUs = [
+const legacyWhyUs = [
   {
     icon: 'trophy',
     title: '+20 años de experiencia',
@@ -233,6 +230,13 @@ const whyUs = [
     desc: 'Más de 1.200 piezas en stock para no perder tiempo esperando recambios.',
   },
 ]
+const whyUs = computed(() => {
+  const parsed = s.value.why_us_text.split('\n').map((line) => {
+    const [icon, title, ...description] = line.split('|')
+    return { icon: icon?.trim() || 'check-circle', title: title?.trim(), desc: description.join('|').trim() }
+  }).filter((item) => item.title)
+  return parsed.length ? parsed : legacyWhyUs
+})
 </script>
 
 <style scoped>

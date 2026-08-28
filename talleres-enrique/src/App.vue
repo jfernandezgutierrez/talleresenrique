@@ -1,6 +1,7 @@
 <template>
   <a class="skip-link" href="#contenido-principal">Saltar al contenido</a>
   <NavBar />
+  <AnnouncementBanner />
   <main id="contenido-principal" tabindex="-1">
     <RouterView />
   </main>
@@ -10,6 +11,7 @@
 
 <script setup>
 import NavBar from '@/components/NavBar.vue'
+import AnnouncementBanner from '@/components/AnnouncementBanner.vue'
 import FooterBar from '@/components/FooterBar.vue'
 import WhatsAppFloat from '@/components/WhatsAppFloat.vue'
 </script>

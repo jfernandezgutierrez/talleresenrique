@@ -21,7 +21,7 @@ import { useSettingsStore } from '@/stores/settings'
 
 const settings = useSettingsStore()
 const waUrl = computed(() =>
-  settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
+  settings.whatsappUrl(settings.settings.wa_general_message),
 )
 </script>
 

@@ -38,9 +38,9 @@
           <h4>Navegación</h4>
           <ul>
             <li><RouterLink to="/">Inicio</RouterLink></li>
-            <li><RouterLink to="/servicios">Servicios</RouterLink></li>
-            <li><RouterLink to="/catalogo">Catálogo de piezas</RouterLink></li>
-            <li><RouterLink to="/contacto">Contacto</RouterLink></li>
+            <li v-if="s.show_services"><RouterLink to="/servicios">Servicios</RouterLink></li>
+            <li v-if="s.show_catalog"><RouterLink to="/catalogo">Catálogo de piezas</RouterLink></li>
+            <li v-if="s.show_contact"><RouterLink to="/contacto">Contacto</RouterLink></li>
             <li><RouterLink to="/aviso-legal">Aviso legal</RouterLink></li>
             <li><RouterLink to="/privacidad">Privacidad</RouterLink></li>
             <li><RouterLink to="/cookies">Cookies</RouterLink></li>
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Servicios -->
-        <div class="footer-col">
+        <div v-if="s.show_services" class="footer-col">
           <h4>Especialidades</h4>
           <ul>
             <li><RouterLink to="/servicios">Maquinaria agrícola</RouterLink></li>
@@ -97,7 +97,7 @@ import AppIcon from '@/components/AppIcon.vue'
 const settings = useSettingsStore()
 const s = computed(() => settings.settings)
 const waUrl = computed(() =>
-  settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
+  settings.whatsappUrl(s.value.wa_general_message),
 )
 
 const year = new Date().getFullYear()

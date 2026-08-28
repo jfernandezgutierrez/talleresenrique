@@ -6,12 +6,9 @@
         <span class="section-tag"
           ><AppIcon name="package" :size="14" /> Recambios &amp; Repuestos</span
         >
-        <h1 class="section-title">Catálogo de <span>Piezas</span></h1>
+        <h1 class="section-title">{{ s.catalog_page_title }}</h1>
         <div class="divider" />
-        <p class="section-desc">
-          Consulta nuestro inventario de recambios. ¿No encuentras lo que buscas? Contáctanos y lo
-          encontramos para ti.
-        </p>
+        <p class="section-desc">{{ s.catalog_page_description }}</p>
       </div>
     </section>
 

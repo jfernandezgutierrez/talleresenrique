@@ -462,6 +462,55 @@
             </div>
           </section>
 
+          <section class="settings-card">
+            <span class="settings-index">05</span><h3>Portada completa</h3>
+            <p class="settings-description">Imagen, distintivo, marcas y presentación de servicios.</p>
+            <div class="form-group"><label>Imagen de portada</label><input v-model="sf.hero_image_url" type="url" placeholder="https://…" /><input type="file" accept="image/jpeg,image/png,image/webp" @change="uploadHeroImage" /><small>{{ uploadingHero ? 'Subiendo imagen…' : 'Puedes pegar una URL o subir una imagen.' }}</small></div>
+            <div class="form-group"><label>Distintivo superior</label><input v-model="sf.home_badge" /></div>
+            <div class="form-group"><label>Marcas (una por línea)</label><textarea v-model="sf.brands_text" rows="6" /></div>
+            <div class="form-row"><div class="form-group"><label>Título del bloque de servicios</label><input v-model="sf.home_services_title" /></div><div class="form-group"><label>Descripción</label><textarea v-model="sf.home_services_description" rows="2" /></div></div>
+          </section>
+
+          <section class="settings-card">
+            <span class="settings-index">06</span><h3>Por qué elegirnos</h3>
+            <p class="settings-description">Una ventaja por línea: icono | título | descripción.</p>
+            <textarea v-model="sf.why_us_text" rows="8" placeholder="trophy|Experiencia|Más de 20 años…" />
+          </section>
+
+          <section class="settings-card">
+            <span class="settings-index">07</span><h3>Títulos, descripciones y llamadas a la acción</h3>
+            <div class="form-row"><div class="form-group"><label>Servicios: título</label><input v-model="sf.services_page_title" /></div><div class="form-group"><label>Servicios: descripción</label><textarea v-model="sf.services_page_description" rows="2" /></div></div>
+            <div class="form-row"><div class="form-group"><label>Catálogo: título</label><input v-model="sf.catalog_page_title" /></div><div class="form-group"><label>Catálogo: descripción</label><textarea v-model="sf.catalog_page_description" rows="2" /></div></div>
+            <div class="form-row"><div class="form-group"><label>Contacto: título</label><input v-model="sf.contact_page_title" /></div><div class="form-group"><label>Contacto: descripción</label><textarea v-model="sf.contact_page_description" rows="2" /></div></div>
+            <div class="form-row"><div class="form-group"><label>CTA portada: título</label><input v-model="sf.home_cta_title" /></div><div class="form-group"><label>CTA portada: texto</label><textarea v-model="sf.home_cta_text" rows="2" /></div></div>
+            <div class="form-row"><div class="form-group"><label>CTA servicios: título</label><input v-model="sf.services_cta_title" /></div><div class="form-group"><label>CTA servicios: texto</label><textarea v-model="sf.services_cta_text" rows="2" /></div></div>
+          </section>
+
+          <section class="settings-card">
+            <span class="settings-index">08</span><h3>Textos legales</h3>
+            <div class="form-row"><div class="form-group"><label>Fecha de revisión</label><input v-model="sf.legal_updated_at_text" /></div><label class="visibility-check"><input v-model="sf.legal_pending" type="checkbox" /> Mostrar aviso pendiente de validar</label></div>
+            <div class="form-group"><label>Aviso legal</label><textarea v-model="sf.legal_notice_text" rows="7" /></div>
+            <div class="form-group"><label>Privacidad</label><textarea v-model="sf.privacy_text" rows="7" /></div>
+            <div class="form-group"><label>Cookies</label><textarea v-model="sf.cookies_text" rows="7" /></div>
+          </section>
+
+          <section class="settings-card">
+            <span class="settings-index">09</span><h3>Mensajes de WhatsApp</h3>
+            <div class="form-group"><label>Mensaje general</label><textarea v-model="sf.wa_general_message" rows="2" /></div>
+            <div class="form-group"><label>Mensaje desde Contacto</label><textarea v-model="sf.wa_contact_message" rows="2" /></div>
+            <div class="form-group"><label>Mensaje de recogida/reparación</label><textarea v-model="sf.wa_pickup_message" rows="2" /></div>
+            <div class="form-group"><label>Consulta de pieza (variables: {pieza} y {referencia})</label><textarea v-model="sf.wa_part_message" rows="2" /></div>
+          </section>
+
+          <section class="settings-card">
+            <span class="settings-index">10</span><h3>Banner temporal</h3>
+            <label class="visibility-check"><input v-model="sf.banner_enabled" type="checkbox" /> Activar banner</label>
+            <div class="form-row"><div class="form-group"><label>Título</label><input v-model="sf.banner_title" /></div><div class="form-group"><label>Tipo</label><select v-model="sf.banner_type"><option value="info">Información</option><option value="warning">Aviso</option><option value="success">Destacado</option></select></div></div>
+            <div class="form-group"><label>Mensaje</label><textarea v-model="sf.banner_text" rows="3" /></div>
+            <div class="form-row"><div class="form-group"><label>Inicio (opcional)</label><input v-model="sf.banner_start_at" type="datetime-local" /></div><div class="form-group"><label>Fin (opcional)</label><input v-model="sf.banner_end_at" type="datetime-local" /></div></div>
+            <div class="form-row"><div class="form-group"><label>Texto del enlace</label><input v-model="sf.banner_link_label" /></div><div class="form-group"><label>URL del enlace</label><input v-model="sf.banner_link_url" /></div></div>
+          </section>
+
           <p v-if="settingsStore.error" class="settings-error">
             No se pudo guardar: {{ settingsStore.error }}
           </p>
@@ -863,6 +912,25 @@ const currentTab = computed(() => tabs.value.find((t) => t.id === activeTab.valu
 // ── Configuración del sitio ──────────────────────────────────────────────
 const sf = reactive(defaultSettings())
 const settingsSaved = ref(false)
+const uploadingHero = ref(false)
+
+async function uploadHeroImage(event) {
+  const file = event.target.files?.[0]
+  if (!file) return
+  uploadingHero.value = true
+  try {
+    const extension = file.name.split('.').pop()
+    const path = `site/hero-${Date.now()}.${extension}`
+    const { error } = await supabase.storage.from(BUCKET).upload(path, file, { contentType: file.type })
+    if (error) throw error
+    sf.hero_image_url = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
+  } catch (e) {
+    settingsStore.error = e.message || String(e)
+  } finally {
+    uploadingHero.value = false
+    event.target.value = ''
+  }
+}
 
 async function saveSiteSettings() {
   settingsSaved.value = false

@@ -24,6 +24,9 @@ export const useSettingsStore = defineStore('settings', () => {
       if (err) throw err
       if (data) {
         settings.value = { ...defaultSettings(), ...data }
+        for (const field of ['banner_start_at', 'banner_end_at']) {
+          if (settings.value[field]) settings.value[field] = settings.value[field].slice(0, 16)
+        }
         exists.value = true
       } else {
         exists.value = false
@@ -40,6 +43,9 @@ export const useSettingsStore = defineStore('settings', () => {
     error.value  = null
     try {
       const payload = { ...patch, id: 1 }
+      for (const field of ['banner_start_at', 'banner_end_at']) {
+        if (!payload[field]) payload[field] = null
+      }
       const { data, error: err } = await supabase
         .from('site_settings')
         .upsert(payload, { onConflict: 'id' })

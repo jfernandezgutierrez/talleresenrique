@@ -4,11 +4,10 @@
     <section class="page-hero">
       <div class="container">
         <span class="section-tag"><AppIcon name="phone" :size="14" /> Hablemos</span>
-        <h1 class="section-title">Contacta con <span>Nosotros</span></h1>
+        <h1 class="section-title">{{ s.contact_page_title }}</h1>
         <div class="divider" />
         <p class="section-desc">
-          Estamos en Selaya, Cantabria. Llámanos, mándanos un WhatsApp o visítanos. Siempre
-          encontraremos una solución para tu maquinaria.
+          {{ s.contact_page_description }}
         </p>
       </div>
     </section>
@@ -115,7 +114,7 @@ import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
 const s = computed(() => settings.settings)
-const waUrl = computed(() => settings.whatsappUrl('Hola, quería contactar con Talleres Enrique.'))
+const waUrl = computed(() => settings.whatsappUrl(s.value.wa_contact_message))
 
 const contactItems = computed(() => [
   { icon: 'map-pin', label: 'Dirección', value: s.value.address },

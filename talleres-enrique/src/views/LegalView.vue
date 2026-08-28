@@ -5,13 +5,13 @@
         <span class="section-tag">Información legal</span>
         <h1 class="section-title">{{ content.title }}</h1>
         <div class="divider" />
-        <p class="section-desc">Última revisión: 25 de agosto de 2026</p>
+        <p class="section-desc">Última revisión: {{ s.legal_updated_at_text }}</p>
       </div>
     </section>
 
     <section class="section-pad">
       <article class="container legal-content">
-        <aside class="legal-pending" role="note">
+        <aside v-if="s.legal_pending" class="legal-pending" role="note">
           <strong>Documento pendiente de validación del titular.</strong>
           Antes de publicar deben completarse la razón social o nombre fiscal, NIF y los datos del
           proveedor de alojamiento.
@@ -27,8 +27,11 @@
 
 <script setup>
 import { computed } from 'vue'
+import { useSettingsStore } from '@/stores/settings'
 
 const props = defineProps({ document: { type: String, required: true } })
+const settings = useSettingsStore()
+const s = computed(() => settings.settings)
 
 const documents = {
   legal: {
@@ -102,7 +105,14 @@ const documents = {
   },
 }
 
-const content = computed(() => documents[props.document])
+const content = computed(() => {
+  const base = documents[props.document]
+  const field = { legal: 'legal_notice_text', privacy: 'privacy_text', cookies: 'cookies_text' }[props.document]
+  return {
+    title: base.title,
+    sections: [{ heading: base.sections[0].heading, paragraphs: (s.value[field] || '').split(/\n\s*\n/).filter(Boolean) }],
+  }
+})
 </script>
 
 <style scoped>

@@ -140,7 +140,7 @@ const settings = useSettingsStore()
 const themeStore = useThemeStore()
 const iconStyleStore = useIconStyleStore()
 const waUrl = computed(() =>
-  settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
+  settings.whatsappUrl(s.value.wa_general_message),
 )
 const s = computed(() => settings.settings)
 

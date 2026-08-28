@@ -1,10 +1,10 @@
 <template>
   <div>
     <!-- HERO -->
-    <section class="hero">
+    <section class="hero" :style="heroStyle">
       <div class="hero-content">
         <div class="hero-badge">
-          <AppIcon name="leaf" :size="15" /> Distribuidores Rapid · Toda Cantabria
+          <AppIcon name="leaf" :size="15" /> {{ s.home_badge }}
         </div>
         <h1>{{ s.hero_title }}</h1>
         <p class="hero-sub">{{ s.hero_tagline }}</p>
@@ -89,11 +89,10 @@
       <div class="container">
         <div class="section-header">
           <span class="section-tag"><AppIcon name="gear" :size="14" /> Lo que hacemos</span>
-          <h2 class="section-title">Nuestros <span>Servicios</span></h2>
+          <h2 class="section-title">{{ s.home_services_title }}</h2>
           <div class="divider" />
           <p class="section-desc">
-            Servicio integral de reparación y mantenimiento para toda clase de maquinaria agrícola y
-            tractores.
+            {{ s.home_services_description }}
           </p>
         </div>
 
@@ -118,8 +117,8 @@
       <div class="container">
         <div class="cta-inner">
           <div>
-            <h2>¿Tu máquina tiene una avería?</h2>
-            <p>Escríbenos por WhatsApp y te atendemos en el menor tiempo posible.</p>
+            <h2>{{ s.home_cta_title }}</h2>
+            <p>{{ s.home_cta_text }}</p>
           </div>
           <div class="cta-btns">
             <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp"
@@ -147,8 +146,9 @@ const servicesStore = useServicesStore()
 onMounted(() => servicesStore.loadServices())
 const s = computed(() => settings.settings)
 const waUrl = computed(() =>
-  settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
+  settings.whatsappUrl(s.value.wa_general_message),
 )
+const heroStyle = computed(() => s.value.hero_image_url ? { '--hero-image': `url("${s.value.hero_image_url}")` } : {})
 
 const router = useRouter()
 const query = ref('')
@@ -158,20 +158,7 @@ function goSearch() {
   router.push({ path: '/catalogo', query: query.value.trim() ? { q: query.value.trim() } : {} })
 }
 
-const brands = [
-  '⭐ Rapid',
-  '⭐ Piva',
-  'John Deere',
-  'Fendt',
-  'Case IH',
-  'New Holland',
-  'Massey Ferguson',
-  'Deutz-Fahr',
-  'Claas',
-  'Same',
-  'Husqvarna',
-  'Stihl',
-]
+const brands = computed(() => s.value.brands_text.split('\n').map((item) => item.trim()).filter(Boolean))
 
 const previewServices = computed(() => servicesStore.services.slice(0, 6))
 /* const legacyPreviewServices = [
@@ -219,8 +206,7 @@ const previewServices = computed(() => servicesStore.services.slice(0, 6))
       var(--hero-overlay-2) 60%,
       var(--hero-overlay-3) 100%
     ),
-    image-set(url('/fondo.webp') type('image/webp'), url('/fondo.png') type('image/png')) center /
-      cover no-repeat;
+    var(--hero-image, image-set(url('/fondo.webp') type('image/webp'), url('/fondo.png') type('image/png'))) center / cover no-repeat;
   display: flex;
   align-items: center;
   padding: 6rem 1.5rem 4rem;
