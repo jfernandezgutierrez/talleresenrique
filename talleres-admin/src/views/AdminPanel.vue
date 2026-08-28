@@ -52,6 +52,10 @@
             {{ store.parts.length }} productos · {{ store.catDefs.length }} categorías
           </p>
           <p v-else-if="activeTab === 'cats'">{{ store.catDefs.length }} categorías configuradas</p>
+          <p v-else-if="activeTab === 'services'">
+            {{ servicesStore.services.length }} servicios configurados
+          </p>
+          <p v-else-if="activeTab === 'pages'">Control de las páginas visibles en la web</p>
           <p v-else>Información pública y datos de contacto del sitio web</p>
         </div>
         <div class="header-actions">
@@ -64,6 +68,13 @@
           </button>
           <button v-if="activeTab === 'cats'" class="btn btn-secondary" @click="openCatModal(null)">
             + Nueva categoría
+          </button>
+          <button
+            v-if="activeTab === 'services'"
+            class="btn btn-secondary"
+            @click="openServiceModal(null)"
+          >
+            + Nuevo servicio
           </button>
           <button
             class="btn btn-outline reload-btn"
@@ -267,6 +278,60 @@
             </div>
           </div>
           <div v-if="store.catDefs.length === 0" class="empty-cats">No hay categorías todavía</div>
+        </div>
+      </template>
+
+      <!-- ── SERVICIOS ───────────────────────────────────────────────── -->
+      <template v-else-if="activeTab === 'services'">
+        <div class="cats-grid">
+          <div v-for="service in servicesStore.services" :key="service.id" class="cat-card service-admin-card">
+            <div class="cat-icon">{{ service.icon }}</div>
+            <div class="cat-info">
+              <strong>{{ service.title }}</strong>
+              <span>{{ service.items.length }} prestaciones · orden {{ service.sort_order }}</span>
+              <span v-if="!service.is_visible" class="hidden-label">Oculto en la web</span>
+            </div>
+            <div class="cat-actions">
+              <button class="icon-btn edit" @click="openServiceModal(service)">Editar</button>
+              <button class="icon-btn del" @click="confirmDelete('service', service)">Eliminar</button>
+            </div>
+          </div>
+          <div v-if="servicesStore.services.length === 0" class="empty-cats">
+            No hay servicios todavía
+          </div>
+        </div>
+      </template>
+
+      <!-- ── PÁGINAS ────────────────────────────────────────────────── -->
+      <template v-else-if="activeTab === 'pages'">
+        <div class="settings-wrap">
+          <section class="settings-card">
+            <span class="settings-index">WEB</span>
+            <h3>Visibilidad de páginas</h3>
+            <p class="settings-description">
+              Las páginas desactivadas desaparecen del menú y sus direcciones redirigen a Inicio.
+              Inicio y las páginas legales permanecen siempre activas.
+            </p>
+            <label class="page-toggle">
+              <span><strong>Servicios</strong><small>Servicios ofrecidos por el taller</small></span>
+              <input v-model="sf.show_services" type="checkbox" />
+            </label>
+            <label class="page-toggle">
+              <span><strong>Catálogo</strong><small>Piezas, buscador y categorías</small></span>
+              <input v-model="sf.show_catalog" type="checkbox" />
+            </label>
+            <label class="page-toggle">
+              <span><strong>Contacto</strong><small>Datos de contacto y formulario</small></span>
+              <input v-model="sf.show_contact" type="checkbox" />
+            </label>
+          </section>
+          <p v-if="settingsStore.error" class="settings-error">No se pudo guardar: {{ settingsStore.error }}</p>
+          <div class="settings-actions">
+            <span v-if="settingsSaved" class="settings-saved">Cambios guardados</span>
+            <button class="btn btn-secondary" @click="saveSiteSettings" :disabled="settingsStore.saving">
+              {{ settingsStore.saving ? 'Guardando…' : 'Guardar visibilidad' }}
+            </button>
+          </div>
         </div>
       </template>
 
@@ -675,6 +740,61 @@
       </Transition>
     </Teleport>
 
+    <!-- ══ MODAL SERVICIO ══════════════════════════════════════════════ -->
+    <Teleport to="body">
+      <Transition name="modal-fade">
+        <div v-if="serviceModal.open" class="overlay" @click.self="serviceModal.open = false">
+          <div class="modal-box">
+            <div class="modal-head">
+              <h2>{{ serviceModal.isNew ? 'Nuevo servicio' : 'Editar servicio' }}</h2>
+              <button class="close-btn" @click="serviceModal.open = false">✕</button>
+            </div>
+            <div class="modal-body">
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Título <span class="req">*</span></label>
+                  <input v-model="serviceForm.title" type="text" placeholder="Maquinaria Agrícola" />
+                </div>
+                <div class="form-group">
+                  <label>Icono</label>
+                  <select v-model="serviceForm.icon">
+                    <option v-for="option in serviceIconOptions" :key="option.value" :value="option.value">
+                      {{ option.label }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Descripción</label>
+                <textarea v-model="serviceForm.description" rows="3" />
+              </div>
+              <div class="form-group">
+                <label>Prestaciones (una por línea)</label>
+                <textarea v-model="serviceForm.itemsText" rows="7" placeholder="Tractores de todas las marcas&#10;Remolques y aperos" />
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label>Orden</label>
+                  <input v-model.number="serviceForm.sort_order" type="number" min="0" step="10" />
+                </div>
+                <label class="visibility-check">
+                  <input v-model="serviceForm.is_visible" type="checkbox" />
+                  Visible en la web pública
+                </label>
+              </div>
+            </div>
+            <p v-if="serviceModal.error" class="modal-error">{{ serviceModal.error }}</p>
+            <div class="modal-foot">
+              <button class="btn btn-outline" @click="serviceModal.open = false">Cancelar</button>
+              <button class="btn btn-secondary" @click="saveService" :disabled="saving">
+                {{ saving ? 'Guardando…' : 'Guardar servicio' }}
+              </button>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
+
     <!-- ══ CONFIRMAR BORRADO ════════════════════════════════════════════ -->
     <Teleport to="body">
       <Transition name="modal-fade">
@@ -709,6 +829,7 @@ import { useRouter } from 'vue-router'
 import { usePartsStore, getPrimaryImage } from '@/stores/parts'
 import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore, defaultSettings } from '@/stores/settings'
+import { useServicesStore } from '@/stores/services'
 import { supabase, BUCKET } from '@/lib/supabase'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 
@@ -716,9 +837,11 @@ const store = usePartsStore()
 const auth = useAuthStore()
 const router = useRouter()
 const settingsStore = useSettingsStore()
+const servicesStore = useServicesStore()
 
 onMounted(async () => {
   store.loadAll()
+  servicesStore.loadServices()
   await settingsStore.loadSettings()
   Object.assign(sf, settingsStore.settings)
 })
@@ -731,6 +854,8 @@ const activeTab = ref('parts')
 const tabs = computed(() => [
   { id: 'parts', short: 'PZ', label: 'Piezas', badge: store.parts.length },
   { id: 'cats', short: 'CT', label: 'Categorías', badge: store.catDefs.length },
+  { id: 'services', short: 'SV', label: 'Servicios', badge: servicesStore.services.length },
+  { id: 'pages', short: 'PG', label: 'Páginas', badge: 0 },
   { id: 'settings', short: 'CF', label: 'Configuración', badge: 0 },
 ])
 const currentTab = computed(() => tabs.value.find((t) => t.id === activeTab.value))
@@ -1131,6 +1256,58 @@ async function saveCat() {
   }
 }
 
+// ── Service modal ───────────────────────────────────────────────────────
+const serviceModal = reactive({ open: false, isNew: true, id: null, error: '' })
+const serviceForm = reactive({
+  title: '', icon: '🔧', description: '', itemsText: '', sort_order: 10, is_visible: true,
+})
+const serviceIconOptions = [
+  { value: 'tractor', label: '🚜 Tractor' },
+  { value: 'cow', label: '🐄 Ganadería' },
+  { value: 'tree', label: '🌲 Forestal' },
+  { value: 'leaf', label: '🌿 Jardín' },
+  { value: 'star', label: '⭐ Destacado' },
+  { value: 'wrench', label: '🔧 Reparación' },
+  { value: 'package', label: '📦 Recambios' },
+  { value: 'calendar', label: '📅 Mantenimiento' },
+]
+
+function openServiceModal(service) {
+  serviceModal.error = ''
+  serviceModal.isNew = !service
+  serviceModal.id = service?.id || null
+  Object.assign(serviceForm, {
+    title: service?.title || '',
+    icon: service?.icon || '🔧',
+    description: service?.description || '',
+    itemsText: (service?.items || []).join('\n'),
+    sort_order: service?.sort_order ?? (servicesStore.services.length + 1) * 10,
+    is_visible: service?.is_visible ?? true,
+  })
+  serviceModal.open = true
+}
+
+async function saveService() {
+  serviceModal.error = ''
+  if (!serviceForm.title.trim()) {
+    serviceModal.error = 'El título es obligatorio.'
+    return
+  }
+  saving.value = true
+  try {
+    await servicesStore.saveService({
+      id: serviceModal.id,
+      ...serviceForm,
+      items: serviceForm.itemsText.split('\n').map((item) => item.trim()).filter(Boolean),
+    })
+    serviceModal.open = false
+  } catch (e) {
+    serviceModal.error = 'Error: ' + (e.message || e)
+  } finally {
+    saving.value = false
+  }
+}
+
 // ── Delete ────────────────────────────────────────────────────────────────
 const delConfirm = reactive({ open: false, name: '', type: '', id: null })
 
@@ -1141,7 +1318,8 @@ async function executeDelete() {
   saving.value = true
   try {
     if (delConfirm.type === 'part') await store.deletePart(delConfirm.id)
-    else await store.deleteCategory(delConfirm.id)
+    else if (delConfirm.type === 'cat') await store.deleteCategory(delConfirm.id)
+    else await servicesStore.deleteService(delConfirm.id)
     delConfirm.open = false
   } catch (e) {
     console.error(e)
@@ -1792,6 +1970,14 @@ code {
   font-size: 0.9rem;
   padding: 2rem;
 }
+.service-admin-card .cat-info span { display: block; }
+.hidden-label { color: #b45309 !important; font-weight: 600; margin-top: 0.2rem; }
+.visibility-check { display: flex; align-items: center; gap: 0.55rem; align-self: center; font-size: 0.88rem; }
+.visibility-check input { width: auto; }
+.page-toggle { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--gray-mid); }
+.page-toggle span { display: flex; flex-direction: column; gap: 0.2rem; }
+.page-toggle small { color: var(--text-soft); font-weight: 400; }
+.page-toggle input { width: 22px; height: 22px; }
 
 /* ── Modals ──────────────────────────────────────────────────────────── */
 .overlay {

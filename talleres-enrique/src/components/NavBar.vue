@@ -17,13 +17,13 @@
         <RouterLink to="/" class="nav-link" active-class="active" exact-active-class="active"
           ><AppIcon name="home" />Inicio</RouterLink
         >
-        <RouterLink to="/servicios" class="nav-link" active-class="active"
+        <RouterLink v-if="s.show_services" to="/servicios" class="nav-link" active-class="active"
           ><AppIcon name="wrench" />Servicios</RouterLink
         >
-        <RouterLink to="/catalogo" class="nav-link" active-class="active"
+        <RouterLink v-if="s.show_catalog" to="/catalogo" class="nav-link" active-class="active"
           ><AppIcon name="package" />Catálogo</RouterLink
         >
-        <RouterLink to="/contacto" class="nav-link" active-class="active"
+        <RouterLink v-if="s.show_contact" to="/contacto" class="nav-link" active-class="active"
           ><AppIcon name="phone" />Contacto</RouterLink
         >
         <a :href="waUrl" target="_blank" rel="noopener" class="nav-link nav-cta"
@@ -80,13 +80,13 @@
         <RouterLink to="/" class="mob-link" @click="closeMobile"
           ><AppIcon name="home" />Inicio</RouterLink
         >
-        <RouterLink to="/servicios" class="mob-link" @click="closeMobile"
+        <RouterLink v-if="s.show_services" to="/servicios" class="mob-link" @click="closeMobile"
           ><AppIcon name="wrench" />Servicios</RouterLink
         >
-        <RouterLink to="/catalogo" class="mob-link" @click="closeMobile"
+        <RouterLink v-if="s.show_catalog" to="/catalogo" class="mob-link" @click="closeMobile"
           ><AppIcon name="package" />Catálogo de Piezas</RouterLink
         >
-        <RouterLink to="/contacto" class="mob-link" @click="closeMobile"
+        <RouterLink v-if="s.show_contact" to="/contacto" class="mob-link" @click="closeMobile"
           ><AppIcon name="phone" />Contacto</RouterLink
         >
         <a
@@ -142,6 +142,7 @@ const iconStyleStore = useIconStyleStore()
 const waUrl = computed(() =>
   settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
 )
+const s = computed(() => settings.settings)
 
 const scrolled = ref(false)
 const mobileOpen = ref(false)

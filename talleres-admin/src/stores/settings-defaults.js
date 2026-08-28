@@ -22,5 +22,8 @@ export function defaultSettings() {
     stat_stock: '+1.200',
     pickup_policy_text:
       'Recogida y reparación en la explotación cuando la avería lo requiere. Consúltanos y valoramos la mejor opción.',
+    show_services: true,
+    show_catalog: true,
+    show_contact: true,
   }
 }

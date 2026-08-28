@@ -11,7 +11,7 @@
         <p class="hero-desc">{{ s.hero_message }}</p>
 
         <!-- Acción principal: buscar una pieza en el catálogo -->
-        <form class="hero-search" @submit.prevent="goSearch">
+        <form v-if="s.show_catalog" class="hero-search" @submit.prevent="goSearch">
           <svg
             width="18"
             height="18"
@@ -85,7 +85,7 @@
     </section>
 
     <!-- SERVICIOS PREVIEW -->
-    <section class="section-pad services-preview">
+    <section v-if="s.show_services" class="section-pad services-preview">
       <div class="container">
         <div class="section-header">
           <span class="section-tag"><AppIcon name="gear" :size="14" /> Lo que hacemos</span>
@@ -98,10 +98,10 @@
         </div>
 
         <div class="services-grid">
-          <div class="service-card" v-for="srv in previewServices" :key="srv.title">
+          <div class="service-card" v-for="srv in previewServices" :key="srv.id">
             <div class="service-icon"><AppIcon :name="srv.icon" :size="26" /></div>
             <h3>{{ srv.title }}</h3>
-            <p>{{ srv.desc }}</p>
+            <p>{{ srv.description }}</p>
           </div>
         </div>
 
@@ -125,7 +125,7 @@
             <a :href="waUrl" target="_blank" rel="noopener" class="btn btn-whatsapp"
               ><AppIcon name="message-circle" /> WhatsApp</a
             >
-            <RouterLink to="/catalogo" class="btn btn-outline"
+            <RouterLink v-if="s.show_catalog" to="/catalogo" class="btn btn-outline"
               ><AppIcon name="package" /> Ver piezas</RouterLink
             >
           </div>
@@ -136,12 +136,15 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useSettingsStore } from '@/stores/settings'
+import { useServicesStore } from '@/stores/services'
 import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
+const servicesStore = useServicesStore()
+onMounted(() => servicesStore.loadServices())
 const s = computed(() => settings.settings)
 const waUrl = computed(() =>
   settings.whatsappUrl('Hola, quería consultar sobre una máquina o pieza.'),
@@ -170,7 +173,8 @@ const brands = [
   'Stihl',
 ]
 
-const previewServices = [
+const previewServices = computed(() => servicesStore.services.slice(0, 6))
+/* const legacyPreviewServices = [
   {
     icon: 'tractor',
     title: 'Maquinaria Agrícola',
@@ -201,7 +205,7 @@ const previewServices = [
     title: 'Venta de Recambios',
     desc: 'Amplio stock de piezas originales Rapid, Piva y recambios para toda clase de maquinaria agrícola y de jardín.',
   },
-]
+] */
 </script>
 
 <style scoped>

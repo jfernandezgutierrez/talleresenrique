@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import HomeView from '@/views/HomeView.vue'
 import { applyRouteSeo } from '@/lib/seo'
+import { useSettingsStore } from '@/stores/settings'
 
 const ServiciosView = () => import('@/views/ServiciosView.vue')
 const CatalogoView = () => import('@/views/CatalogoView.vue')
@@ -92,6 +93,17 @@ const router = createRouter({
     if (savedPosition) return savedPosition
     return { top: 0, behavior: 'smooth' }
   },
+})
+
+router.beforeEach(async (to) => {
+  const settings = useSettingsStore()
+  if (!settings.loaded) await settings.loadSettings()
+  const visibility = {
+    servicios: settings.settings.show_services,
+    catalogo: settings.settings.show_catalog,
+    contacto: settings.settings.show_contact,
+  }
+  if (to.name in visibility && !visibility[to.name]) return { name: 'home' }
 })
 
 router.afterEach((to) => {

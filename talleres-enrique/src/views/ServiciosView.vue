@@ -18,12 +18,15 @@
     <section class="section-pad">
       <div class="container">
         <div class="services-grid">
-          <div class="service-card" v-for="srv in services" :key="srv.title">
+          <div class="service-card" v-for="srv in servicesStore.services" :key="srv.id">
             <div class="card-top">
-              <div class="service-icon"><AppIcon :name="srv.icon" :size="24" /></div>
+              <div class="service-icon">
+                <AppIcon v-if="!isEmoji(srv.icon)" :name="srv.icon" :size="24" />
+                <span v-else aria-hidden="true">{{ srv.icon }}</span>
+              </div>
               <h2>{{ srv.title }}</h2>
             </div>
-            <p>{{ srv.desc }}</p>
+            <p>{{ srv.description }}</p>
             <ul class="srv-list">
               <li v-for="item in srv.items" :key="item">{{ item }}</li>
             </ul>
@@ -84,17 +87,22 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useSettingsStore } from '@/stores/settings'
+import { useServicesStore } from '@/stores/services'
 import AppIcon from '@/components/AppIcon.vue'
 
 const settings = useSettingsStore()
+const servicesStore = useServicesStore()
+onMounted(() => servicesStore.loadServices())
 const s = computed(() => settings.settings)
 const waUrl = computed(() =>
   settings.whatsappUrl('Hola, quería consultar sobre recogida o reparación en la explotación.'),
 )
+const isEmoji = (value) => /[^\w-]/u.test(value || '')
 
-const services = [
+/* Los servicios se administran desde Supabase mediante el panel. */
+/* const services = [
   {
     icon: 'tractor',
     title: 'Maquinaria Agrícola',
@@ -191,7 +199,7 @@ const services = [
       'Contratos de mantenimiento',
     ],
   },
-]
+] */
 
 const whyUs = [
   {
