@@ -55,6 +55,9 @@
           <p v-else-if="activeTab === 'services'">
             {{ servicesStore.services.length }} servicios configurados
           </p>
+          <p v-else-if="activeTab === 'watermark'">
+            Prepara varias fotografías con el logotipo antes de publicarlas
+          </p>
           <p v-else-if="activeTab === 'pages'">Control de las páginas visibles en la web</p>
           <p v-else>Información pública y datos de contacto del sitio web</p>
         </div>
@@ -284,7 +287,11 @@
       <!-- ── SERVICIOS ───────────────────────────────────────────────── -->
       <template v-else-if="activeTab === 'services'">
         <div class="cats-grid">
-          <div v-for="service in servicesStore.services" :key="service.id" class="cat-card service-admin-card">
+          <div
+            v-for="service in servicesStore.services"
+            :key="service.id"
+            class="cat-card service-admin-card"
+          >
             <div class="cat-icon">{{ service.icon }}</div>
             <div class="cat-info">
               <strong>{{ service.title }}</strong>
@@ -293,12 +300,91 @@
             </div>
             <div class="cat-actions">
               <button class="icon-btn edit" @click="openServiceModal(service)">Editar</button>
-              <button class="icon-btn del" @click="confirmDelete('service', service)">Eliminar</button>
+              <button class="icon-btn del" @click="confirmDelete('service', service)">
+                Eliminar
+              </button>
             </div>
           </div>
           <div v-if="servicesStore.services.length === 0" class="empty-cats">
             No hay servicios todavía
           </div>
+        </div>
+      </template>
+
+      <!-- ── MARCA DE AGUA ───────────────────────────────────────────── -->
+      <template v-else-if="activeTab === 'watermark'">
+        <div class="watermark-wrap">
+          <section class="settings-card watermark-card">
+            <span class="settings-index">IMG</span>
+            <h3>Aplicar marca de agua por lotes</h3>
+            <p class="settings-description">
+              Selecciona todas las fotografías que necesites. Se procesan únicamente en este
+              dispositivo y se descargan juntas en un archivo ZIP.
+            </p>
+
+            <div class="watermark-options">
+              <label>
+                <span
+                  >Tamaño del logotipo <strong>{{ batchWatermarkSize }}%</strong></span
+                >
+                <input v-model.number="batchWatermarkSize" type="range" min="10" max="30" />
+              </label>
+              <label>
+                <span
+                  >Opacidad <strong>{{ batchWatermarkOpacity }}%</strong></span
+                >
+                <input v-model.number="batchWatermarkOpacity" type="range" min="25" max="100" />
+              </label>
+            </div>
+
+            <div
+              class="watermark-drop"
+              @click="$refs.watermarkInput.click()"
+              @dragover.prevent
+              @drop.prevent="onWatermarkDrop"
+            >
+              <span>＋</span>
+              <strong>Seleccionar fotografías</strong>
+              <small>También puedes arrastrarlas aquí · JPG, PNG o WEBP</small>
+            </div>
+            <input
+              ref="watermarkInput"
+              type="file"
+              accept="image/jpeg,image/png,image/webp"
+              multiple
+              hidden
+              @change="onWatermarkFiles"
+            />
+
+            <div v-if="batchImages.length" class="watermark-gallery">
+              <article v-for="(item, index) in batchImages" :key="item.id">
+                <img :src="item.preview" :alt="item.file.name" />
+                <div>
+                  <strong>{{ item.file.name }}</strong
+                  ><small>{{ formatFileSize(item.file.size) }}</small>
+                </div>
+                <button type="button" title="Quitar" @click="removeBatchImage(index)">✕</button>
+              </article>
+            </div>
+
+            <p v-if="batchError" class="modal-error">{{ batchError }}</p>
+            <div class="watermark-actions">
+              <button v-if="batchImages.length" class="btn btn-outline" @click="clearBatchImages">
+                Vaciar selección
+              </button>
+              <button
+                class="btn btn-secondary"
+                :disabled="!batchImages.length || batchProcessing"
+                @click="downloadWatermarkedBatch"
+              >
+                {{
+                  batchProcessing
+                    ? `Procesando ${batchProgress}/${batchImages.length}…`
+                    : `Descargar ZIP (${batchImages.length})`
+                }}
+              </button>
+            </div>
+          </section>
         </div>
       </template>
 
@@ -313,7 +399,9 @@
               Inicio y las páginas legales permanecen siempre activas.
             </p>
             <label class="page-toggle">
-              <span><strong>Servicios</strong><small>Servicios ofrecidos por el taller</small></span>
+              <span
+                ><strong>Servicios</strong><small>Servicios ofrecidos por el taller</small></span
+              >
               <input v-model="sf.show_services" type="checkbox" />
             </label>
             <label class="page-toggle">
@@ -325,10 +413,16 @@
               <input v-model="sf.show_contact" type="checkbox" />
             </label>
           </section>
-          <p v-if="settingsStore.error" class="settings-error">No se pudo guardar: {{ settingsStore.error }}</p>
+          <p v-if="settingsStore.error" class="settings-error">
+            No se pudo guardar: {{ settingsStore.error }}
+          </p>
           <div class="settings-actions">
             <span v-if="settingsSaved" class="settings-saved">Cambios guardados</span>
-            <button class="btn btn-secondary" @click="saveSiteSettings" :disabled="settingsStore.saving">
+            <button
+              class="btn btn-secondary"
+              @click="saveSiteSettings"
+              :disabled="settingsStore.saving"
+            >
               {{ settingsStore.saving ? 'Guardando…' : 'Guardar visibilidad' }}
             </button>
           </div>
@@ -463,52 +557,180 @@
           </section>
 
           <section class="settings-card">
-            <span class="settings-index">05</span><h3>Portada completa</h3>
-            <p class="settings-description">Imagen, distintivo, marcas y presentación de servicios.</p>
-            <div class="form-group"><label>Imagen de portada</label><input v-model="sf.hero_image_url" type="url" placeholder="https://…" /><input type="file" accept="image/jpeg,image/png,image/webp" @change="uploadHeroImage" /><small>{{ uploadingHero ? 'Subiendo imagen…' : 'Puedes pegar una URL o subir una imagen.' }}</small></div>
-            <div class="form-group"><label>Distintivo superior</label><input v-model="sf.home_badge" /></div>
-            <div class="form-group"><label>Marcas (una por línea)</label><textarea v-model="sf.brands_text" rows="6" /></div>
-            <div class="form-row"><div class="form-group"><label>Título del bloque de servicios</label><input v-model="sf.home_services_title" /></div><div class="form-group"><label>Descripción</label><textarea v-model="sf.home_services_description" rows="2" /></div></div>
+            <span class="settings-index">05</span>
+            <h3>Portada completa</h3>
+            <p class="settings-description">
+              Imagen, distintivo, marcas y presentación de servicios.
+            </p>
+            <div class="form-group">
+              <label>Imagen de portada</label
+              ><input v-model="sf.hero_image_url" type="url" placeholder="https://…" /><input
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                @change="uploadHeroImage"
+              /><small>{{
+                uploadingHero ? 'Subiendo imagen…' : 'Puedes pegar una URL o subir una imagen.'
+              }}</small>
+            </div>
+            <div class="form-group">
+              <label>Distintivo superior</label><input v-model="sf.home_badge" />
+            </div>
+            <div class="form-group">
+              <label>Marcas (una por línea)</label><textarea v-model="sf.brands_text" rows="6" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Título del bloque de servicios</label
+                ><input v-model="sf.home_services_title" />
+              </div>
+              <div class="form-group">
+                <label>Descripción</label
+                ><textarea v-model="sf.home_services_description" rows="2" />
+              </div>
+            </div>
           </section>
 
           <section class="settings-card">
-            <span class="settings-index">06</span><h3>Por qué elegirnos</h3>
+            <span class="settings-index">06</span>
+            <h3>Por qué elegirnos</h3>
             <p class="settings-description">Una ventaja por línea: icono | título | descripción.</p>
-            <textarea v-model="sf.why_us_text" rows="8" placeholder="trophy|Experiencia|Más de 20 años…" />
+            <textarea
+              v-model="sf.why_us_text"
+              rows="8"
+              placeholder="trophy|Experiencia|Más de 20 años…"
+            />
           </section>
 
           <section class="settings-card">
-            <span class="settings-index">07</span><h3>Títulos, descripciones y llamadas a la acción</h3>
-            <div class="form-row"><div class="form-group"><label>Servicios: título</label><input v-model="sf.services_page_title" /></div><div class="form-group"><label>Servicios: descripción</label><textarea v-model="sf.services_page_description" rows="2" /></div></div>
-            <div class="form-row"><div class="form-group"><label>Catálogo: título</label><input v-model="sf.catalog_page_title" /></div><div class="form-group"><label>Catálogo: descripción</label><textarea v-model="sf.catalog_page_description" rows="2" /></div></div>
-            <div class="form-row"><div class="form-group"><label>Contacto: título</label><input v-model="sf.contact_page_title" /></div><div class="form-group"><label>Contacto: descripción</label><textarea v-model="sf.contact_page_description" rows="2" /></div></div>
-            <div class="form-row"><div class="form-group"><label>CTA portada: título</label><input v-model="sf.home_cta_title" /></div><div class="form-group"><label>CTA portada: texto</label><textarea v-model="sf.home_cta_text" rows="2" /></div></div>
-            <div class="form-row"><div class="form-group"><label>CTA servicios: título</label><input v-model="sf.services_cta_title" /></div><div class="form-group"><label>CTA servicios: texto</label><textarea v-model="sf.services_cta_text" rows="2" /></div></div>
+            <span class="settings-index">07</span>
+            <h3>Títulos, descripciones y llamadas a la acción</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Servicios: título</label><input v-model="sf.services_page_title" />
+              </div>
+              <div class="form-group">
+                <label>Servicios: descripción</label
+                ><textarea v-model="sf.services_page_description" rows="2" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Catálogo: título</label><input v-model="sf.catalog_page_title" />
+              </div>
+              <div class="form-group">
+                <label>Catálogo: descripción</label
+                ><textarea v-model="sf.catalog_page_description" rows="2" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Contacto: título</label><input v-model="sf.contact_page_title" />
+              </div>
+              <div class="form-group">
+                <label>Contacto: descripción</label
+                ><textarea v-model="sf.contact_page_description" rows="2" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>CTA portada: título</label><input v-model="sf.home_cta_title" />
+              </div>
+              <div class="form-group">
+                <label>CTA portada: texto</label><textarea v-model="sf.home_cta_text" rows="2" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>CTA servicios: título</label><input v-model="sf.services_cta_title" />
+              </div>
+              <div class="form-group">
+                <label>CTA servicios: texto</label
+                ><textarea v-model="sf.services_cta_text" rows="2" />
+              </div>
+            </div>
           </section>
 
           <section class="settings-card">
-            <span class="settings-index">08</span><h3>Textos legales</h3>
-            <div class="form-row"><div class="form-group"><label>Fecha de revisión</label><input v-model="sf.legal_updated_at_text" /></div><label class="visibility-check"><input v-model="sf.legal_pending" type="checkbox" /> Mostrar aviso pendiente de validar</label></div>
-            <div class="form-group"><label>Aviso legal</label><textarea v-model="sf.legal_notice_text" rows="7" /></div>
-            <div class="form-group"><label>Privacidad</label><textarea v-model="sf.privacy_text" rows="7" /></div>
-            <div class="form-group"><label>Cookies</label><textarea v-model="sf.cookies_text" rows="7" /></div>
+            <span class="settings-index">08</span>
+            <h3>Textos legales</h3>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Fecha de revisión</label><input v-model="sf.legal_updated_at_text" />
+              </div>
+              <label class="visibility-check"
+                ><input v-model="sf.legal_pending" type="checkbox" /> Mostrar aviso pendiente de
+                validar</label
+              >
+            </div>
+            <div class="form-group">
+              <label>Aviso legal</label><textarea v-model="sf.legal_notice_text" rows="7" />
+            </div>
+            <div class="form-group">
+              <label>Privacidad</label><textarea v-model="sf.privacy_text" rows="7" />
+            </div>
+            <div class="form-group">
+              <label>Cookies</label><textarea v-model="sf.cookies_text" rows="7" />
+            </div>
           </section>
 
           <section class="settings-card">
-            <span class="settings-index">09</span><h3>Mensajes de WhatsApp</h3>
-            <div class="form-group"><label>Mensaje general</label><textarea v-model="sf.wa_general_message" rows="2" /></div>
-            <div class="form-group"><label>Mensaje desde Contacto</label><textarea v-model="sf.wa_contact_message" rows="2" /></div>
-            <div class="form-group"><label>Mensaje de recogida/reparación</label><textarea v-model="sf.wa_pickup_message" rows="2" /></div>
-            <div class="form-group"><label>Consulta de pieza (variables: {pieza} y {referencia})</label><textarea v-model="sf.wa_part_message" rows="2" /></div>
+            <span class="settings-index">09</span>
+            <h3>Mensajes de WhatsApp</h3>
+            <div class="form-group">
+              <label>Mensaje general</label><textarea v-model="sf.wa_general_message" rows="2" />
+            </div>
+            <div class="form-group">
+              <label>Mensaje desde Contacto</label
+              ><textarea v-model="sf.wa_contact_message" rows="2" />
+            </div>
+            <div class="form-group">
+              <label>Mensaje de recogida/reparación</label
+              ><textarea v-model="sf.wa_pickup_message" rows="2" />
+            </div>
+            <div class="form-group">
+              <label>Consulta de pieza (variables: {pieza} y {referencia})</label
+              ><textarea v-model="sf.wa_part_message" rows="2" />
+            </div>
           </section>
 
           <section class="settings-card">
-            <span class="settings-index">10</span><h3>Banner temporal</h3>
-            <label class="visibility-check"><input v-model="sf.banner_enabled" type="checkbox" /> Activar banner</label>
-            <div class="form-row"><div class="form-group"><label>Título</label><input v-model="sf.banner_title" /></div><div class="form-group"><label>Tipo</label><select v-model="sf.banner_type"><option value="info">Información</option><option value="warning">Aviso</option><option value="success">Destacado</option></select></div></div>
-            <div class="form-group"><label>Mensaje</label><textarea v-model="sf.banner_text" rows="3" /></div>
-            <div class="form-row"><div class="form-group"><label>Inicio (opcional)</label><input v-model="sf.banner_start_at" type="datetime-local" /></div><div class="form-group"><label>Fin (opcional)</label><input v-model="sf.banner_end_at" type="datetime-local" /></div></div>
-            <div class="form-row"><div class="form-group"><label>Texto del enlace</label><input v-model="sf.banner_link_label" /></div><div class="form-group"><label>URL del enlace</label><input v-model="sf.banner_link_url" /></div></div>
+            <span class="settings-index">10</span>
+            <h3>Banner temporal</h3>
+            <label class="visibility-check"
+              ><input v-model="sf.banner_enabled" type="checkbox" /> Activar banner</label
+            >
+            <div class="form-row">
+              <div class="form-group"><label>Título</label><input v-model="sf.banner_title" /></div>
+              <div class="form-group">
+                <label>Tipo</label
+                ><select v-model="sf.banner_type">
+                  <option value="info">Información</option>
+                  <option value="warning">Aviso</option>
+                  <option value="success">Destacado</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Mensaje</label><textarea v-model="sf.banner_text" rows="3" />
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Inicio (opcional)</label
+                ><input v-model="sf.banner_start_at" type="datetime-local" />
+              </div>
+              <div class="form-group">
+                <label>Fin (opcional)</label
+                ><input v-model="sf.banner_end_at" type="datetime-local" />
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Texto del enlace</label><input v-model="sf.banner_link_label" />
+              </div>
+              <div class="form-group">
+                <label>URL del enlace</label><input v-model="sf.banner_link_url" />
+              </div>
+            </div>
           </section>
 
           <p v-if="settingsStore.error" class="settings-error">
@@ -603,6 +825,14 @@
               <!-- ── GALERÍA DE MEDIA ── -->
               <div class="form-group">
                 <label>Imágenes y Vídeos</label>
+
+                <label class="watermark-toggle">
+                  <span>
+                    <strong>Añadir marca de agua</strong>
+                    <small>Se aplicará solo a las imágenes nuevas cuando guardes la pieza.</small>
+                  </span>
+                  <input v-model="partWatermarkEnabled" type="checkbox" />
+                </label>
 
                 <!-- Grid de media existente -->
                 <div v-if="mediaItems.length" class="media-grid">
@@ -802,12 +1032,20 @@
               <div class="form-row">
                 <div class="form-group">
                   <label>Título <span class="req">*</span></label>
-                  <input v-model="serviceForm.title" type="text" placeholder="Maquinaria Agrícola" />
+                  <input
+                    v-model="serviceForm.title"
+                    type="text"
+                    placeholder="Maquinaria Agrícola"
+                  />
                 </div>
                 <div class="form-group">
                   <label>Icono</label>
                   <select v-model="serviceForm.icon">
-                    <option v-for="option in serviceIconOptions" :key="option.value" :value="option.value">
+                    <option
+                      v-for="option in serviceIconOptions"
+                      :key="option.value"
+                      :value="option.value"
+                    >
                       {{ option.label }}
                     </option>
                   </select>
@@ -819,7 +1057,11 @@
               </div>
               <div class="form-group">
                 <label>Prestaciones (una por línea)</label>
-                <textarea v-model="serviceForm.itemsText" rows="7" placeholder="Tractores de todas las marcas&#10;Remolques y aperos" />
+                <textarea
+                  v-model="serviceForm.itemsText"
+                  rows="7"
+                  placeholder="Tractores de todas las marcas&#10;Remolques y aperos"
+                />
               </div>
               <div class="form-row">
                 <div class="form-group">
@@ -873,13 +1115,15 @@
 </template>
 
 <script setup>
-import { ref, computed, reactive, watch, onMounted } from 'vue'
+import { ref, computed, reactive, watch, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import JSZip from 'jszip'
 import { usePartsStore, getPrimaryImage } from '@/stores/parts'
 import { useAuthStore } from '@/stores/auth'
 import { useSettingsStore, defaultSettings } from '@/stores/settings'
 import { useServicesStore } from '@/stores/services'
 import { supabase, BUCKET } from '@/lib/supabase'
+import { addWatermark } from '@/lib/watermark'
 import EmojiPicker from '@/components/EmojiPicker.vue'
 
 const store = usePartsStore()
@@ -904,10 +1148,100 @@ const tabs = computed(() => [
   { id: 'parts', short: 'PZ', label: 'Piezas', badge: store.parts.length },
   { id: 'cats', short: 'CT', label: 'Categorías', badge: store.catDefs.length },
   { id: 'services', short: 'SV', label: 'Servicios', badge: servicesStore.services.length },
+  { id: 'watermark', short: 'MA', label: 'Marca de agua', badge: batchImages.value.length },
   { id: 'pages', short: 'PG', label: 'Páginas', badge: 0 },
   { id: 'settings', short: 'CF', label: 'Configuración', badge: 0 },
 ])
 const currentTab = computed(() => tabs.value.find((t) => t.id === activeTab.value))
+
+// ── Procesador local de marca de agua ────────────────────────────────────
+const batchImages = ref([])
+const batchWatermarkSize = ref(18)
+const batchWatermarkOpacity = ref(62)
+const batchProcessing = ref(false)
+const batchProgress = ref(0)
+const batchError = ref('')
+
+function addBatchImages(files) {
+  batchError.value = ''
+  const validFiles = [...files].filter((file) =>
+    ['image/jpeg', 'image/png', 'image/webp'].includes(file.type),
+  )
+  if (validFiles.length !== files.length) {
+    batchError.value = 'Se han omitido archivos que no eran imágenes JPG, PNG o WEBP.'
+  }
+  for (const file of validFiles) {
+    batchImages.value.push({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      file,
+      preview: URL.createObjectURL(file),
+    })
+  }
+}
+
+function onWatermarkFiles(event) {
+  addBatchImages(event.target.files || [])
+  event.target.value = ''
+}
+
+function onWatermarkDrop(event) {
+  addBatchImages(event.dataTransfer.files || [])
+}
+
+function removeBatchImage(index) {
+  URL.revokeObjectURL(batchImages.value[index].preview)
+  batchImages.value.splice(index, 1)
+}
+
+function clearBatchImages() {
+  batchImages.value.forEach((item) => URL.revokeObjectURL(item.preview))
+  batchImages.value = []
+  batchError.value = ''
+  batchProgress.value = 0
+}
+
+function formatFileSize(bytes) {
+  return bytes < 1024 * 1024
+    ? `${Math.max(1, Math.round(bytes / 1024))} KB`
+    : `${(bytes / 1024 / 1024).toFixed(1)} MB`
+}
+
+async function downloadWatermarkedBatch() {
+  batchProcessing.value = true
+  batchProgress.value = 0
+  batchError.value = ''
+  try {
+    const zip = new JSZip()
+    const usedNames = new Set()
+    for (const item of batchImages.value) {
+      const output = await addWatermark(item.file, {
+        size: batchWatermarkSize.value / 100,
+        opacity: batchWatermarkOpacity.value / 100,
+      })
+      let filename = output.name
+      let copy = 2
+      while (usedNames.has(filename.toLowerCase())) {
+        filename = output.name.replace(/(\.[^.]+)$/, `-${copy++}$1`)
+      }
+      usedNames.add(filename.toLowerCase())
+      zip.file(filename, output)
+      batchProgress.value++
+    }
+    const blob = await zip.generateAsync({ type: 'blob' })
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = `talleres-enrique-marca-${new Date().toISOString().slice(0, 10)}.zip`
+    link.click()
+    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+  } catch (error) {
+    batchError.value = error.message || 'No se pudieron procesar las imágenes.'
+  } finally {
+    batchProcessing.value = false
+  }
+}
+
+onUnmounted(clearBatchImages)
 
 // ── Configuración del sitio ──────────────────────────────────────────────
 const sf = reactive(defaultSettings())
@@ -921,7 +1255,9 @@ async function uploadHeroImage(event) {
   try {
     const extension = file.name.split('.').pop()
     const path = `site/hero-${Date.now()}.${extension}`
-    const { error } = await supabase.storage.from(BUCKET).upload(path, file, { contentType: file.type })
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, file, { contentType: file.type })
     if (error) throw error
     sf.hero_image_url = supabase.storage.from(BUCKET).getPublicUrl(path).data.publicUrl
   } catch (e) {
@@ -1043,6 +1379,7 @@ const saving = ref(false)
 // mediaItems: array de items de media para el modal
 // Cada item: { _key, id (si ya existe en BD), url, type, is_primary, preview (dataURL local), _file (File pendiente), _videoFile (File pendiente) }
 const mediaItems = ref([])
+const partWatermarkEnabled = ref(true)
 const videoUrlInput = ref('')
 const multiImgInput = ref(null)
 const videoFileInput = ref(null)
@@ -1050,6 +1387,7 @@ const videoFileInput = ref(null)
 function openPartModal(part) {
   partModal.error = ''
   videoUrlInput.value = ''
+  partWatermarkEnabled.value = true
   if (part) {
     partModal.isNew = false
     partModal.id = part.id
@@ -1184,12 +1522,13 @@ function getVideoThumb(url) {
 }
 
 // ── Upload helpers ────────────────────────────────────────────────────────
-async function uploadImageFile(file) {
-  const ext = file.name.split('.').pop()
+async function uploadImageFile(file, withWatermark = false) {
+  const uploadFile = withWatermark ? await addWatermark(file) : file
+  const ext = uploadFile.name.split('.').pop()
   const filename = `part-${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
   const { error } = await supabase.storage
     .from(BUCKET)
-    .upload(filename, file, { upsert: true, contentType: file.type })
+    .upload(filename, uploadFile, { upsert: true, contentType: uploadFile.type })
   if (error) throw error
   return supabase.storage.from(BUCKET).getPublicUrl(filename).data.publicUrl
 }
@@ -1248,7 +1587,7 @@ async function savePart() {
     let sortOffset = idsEnBD.size
     for (const item of mediaItems.value) {
       if (item._file) {
-        const url = await uploadImageFile(item._file)
+        const url = await uploadImageFile(item._file, partWatermarkEnabled.value)
         await store.addMedia(partId, {
           url,
           type: 'image',
@@ -1327,7 +1666,12 @@ async function saveCat() {
 // ── Service modal ───────────────────────────────────────────────────────
 const serviceModal = reactive({ open: false, isNew: true, id: null, error: '' })
 const serviceForm = reactive({
-  title: '', icon: '🔧', description: '', itemsText: '', sort_order: 10, is_visible: true,
+  title: '',
+  icon: '🔧',
+  description: '',
+  itemsText: '',
+  sort_order: 10,
+  is_visible: true,
 })
 const serviceIconOptions = [
   { value: 'tractor', label: '🚜 Tractor' },
@@ -1366,7 +1710,10 @@ async function saveService() {
     await servicesStore.saveService({
       id: serviceModal.id,
       ...serviceForm,
-      items: serviceForm.itemsText.split('\n').map((item) => item.trim()).filter(Boolean),
+      items: serviceForm.itemsText
+        .split('\n')
+        .map((item) => item.trim())
+        .filter(Boolean),
     })
     serviceModal.open = false
   } catch (e) {
@@ -2038,14 +2385,45 @@ code {
   font-size: 0.9rem;
   padding: 2rem;
 }
-.service-admin-card .cat-info span { display: block; }
-.hidden-label { color: #b45309 !important; font-weight: 600; margin-top: 0.2rem; }
-.visibility-check { display: flex; align-items: center; gap: 0.55rem; align-self: center; font-size: 0.88rem; }
-.visibility-check input { width: auto; }
-.page-toggle { display: flex; align-items: center; justify-content: space-between; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--gray-mid); }
-.page-toggle span { display: flex; flex-direction: column; gap: 0.2rem; }
-.page-toggle small { color: var(--text-soft); font-weight: 400; }
-.page-toggle input { width: 22px; height: 22px; }
+.service-admin-card .cat-info span {
+  display: block;
+}
+.hidden-label {
+  color: #b45309 !important;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+.visibility-check {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  align-self: center;
+  font-size: 0.88rem;
+}
+.visibility-check input {
+  width: auto;
+}
+.page-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid var(--gray-mid);
+}
+.page-toggle span {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+.page-toggle small {
+  color: var(--text-soft);
+  font-weight: 400;
+}
+.page-toggle input {
+  width: 22px;
+  height: 22px;
+}
 
 /* ── Modals ──────────────────────────────────────────────────────────── */
 .overlay {
@@ -2503,6 +2881,134 @@ code {
   border: 1px solid #fecaca;
   padding: 0.6rem 0.9rem;
   border-radius: var(--radius-sm);
+}
+
+/* ── Marca de agua ───────────────────────────────────────────────────── */
+.watermark-wrap {
+  max-width: 980px;
+}
+.watermark-card {
+  position: relative;
+}
+.watermark-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 1.25rem 0;
+}
+.watermark-options label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  color: var(--text-soft);
+  font-size: 0.8rem;
+}
+.watermark-options strong {
+  color: var(--green-mid);
+}
+.watermark-options input {
+  accent-color: var(--green-mid);
+}
+.watermark-drop {
+  min-height: 150px;
+  border: 2px dashed #b8cbc6;
+  border-radius: var(--radius);
+  background: #f8fcfb;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  color: var(--green-dark);
+  cursor: pointer;
+  transition: var(--transition);
+}
+.watermark-drop:hover {
+  border-color: var(--green-mid);
+  background: var(--green-pale);
+}
+.watermark-drop > span {
+  font-size: 2rem;
+  line-height: 1;
+}
+.watermark-drop small {
+  color: var(--text-soft);
+}
+.watermark-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+.watermark-gallery article {
+  display: grid;
+  grid-template-columns: 58px minmax(0, 1fr) 28px;
+  gap: 0.65rem;
+  align-items: center;
+  padding: 0.55rem;
+  border: 1px solid var(--gray-mid);
+  border-radius: var(--radius-sm);
+}
+.watermark-gallery img {
+  width: 58px;
+  height: 58px;
+  border-radius: 6px;
+  object-fit: cover;
+}
+.watermark-gallery article div {
+  min-width: 0;
+}
+.watermark-gallery strong,
+.watermark-gallery small {
+  display: block;
+}
+.watermark-gallery strong {
+  overflow: hidden;
+  color: var(--text-main);
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.watermark-gallery small {
+  margin-top: 0.2rem;
+  color: var(--text-soft);
+}
+.watermark-gallery button {
+  color: #b84a45;
+  background: transparent;
+}
+.watermark-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.65rem;
+  margin-top: 1.25rem;
+}
+.watermark-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 0.55rem 0 0.85rem;
+  padding: 0.75rem 0.85rem;
+  border: 1px solid #cde9df;
+  border-radius: var(--radius-sm);
+  background: #f4fbf8;
+  cursor: pointer;
+}
+.watermark-toggle span,
+.watermark-toggle small {
+  display: block;
+}
+.watermark-toggle small {
+  margin-top: 0.15rem;
+  color: var(--text-soft);
+  font-weight: 400;
+}
+.watermark-toggle input {
+  width: 42px;
+  height: 22px;
+  flex-shrink: 0;
+  accent-color: var(--green-mid);
 }
 
 /* Responsive */

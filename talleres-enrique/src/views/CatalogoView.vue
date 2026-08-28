@@ -139,6 +139,7 @@ import AppIcon from '@/components/AppIcon.vue'
 
 const store = usePartsStore()
 const settings = useSettingsStore()
+const s = computed(() => settings.settings)
 const route = useRoute()
 const selectedPart = ref(null)
 const searchFocused = ref(false)
